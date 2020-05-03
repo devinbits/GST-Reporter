@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">GST Reporter</string>
+    <string name="action_logout">Logout</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+
+    <string name="new_sale">New Sale</string>
+    <string name="invoice">Invoice# :</string>
+    <string name="date">Date :</string>
+    <string name="party_name">Party Name :</string>
+    <string name="invoice_amount">Invoice Amount :</string>
+
+</resources>
