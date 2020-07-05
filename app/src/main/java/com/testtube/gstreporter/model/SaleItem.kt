@@ -4,19 +4,18 @@ import java.io.Serializable
 import java.util.*
 
 class SaleItem(
-    var invoiceNumber: String = "IN-${System.currentTimeMillis()}",
+    val invoiceId: Long = System.currentTimeMillis(),
+    var invoiceNumber: String = "IN-${invoiceId}",
     var gstNumber: String = "",
     var partyName: String = "",
-    var taxableAmount: Double = Double.MIN_VALUE,
+    var taxableAmount: Double = 0.0,
     var date: Date = Date(),
-    var sGST: Double = Double.MIN_VALUE,
-    var cGST: Double = Double.MIN_VALUE,
-    var iGST: Double = Double.MIN_VALUE,
+    var sGST: Double = 0.0,
+    var cGST: Double = 0.0,
+    var iGST: Double = 0.0,
     var tGST: Double = sGST + cGST + iGST,
-    var totalInvoiceAmount: Double = Double.MIN_VALUE
+    var totalInvoiceAmount: Double = 0.0
 ) : Serializable {
-
-    var invoiceId: Long = System.currentTimeMillis()
 
     var invoiceCreatedDate: Date = Date()
 

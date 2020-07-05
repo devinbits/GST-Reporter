@@ -10,9 +10,13 @@ import com.testtube.gstreporter.R
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
+import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
+import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
 import kotlinx.android.synthetic.main.sale_item.view.*
 
-class SalesListAdapter(var salesList: List<SaleItem>) :
+class SalesListAdapter(
+    private var salesList: List<SaleItem>, private var listener: RecyclerViewInterface
+) :
     RecyclerView.Adapter<SalesListAdapter.MyViewHolder>() {
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
@@ -21,21 +25,32 @@ class SalesListAdapter(var salesList: List<SaleItem>) :
         private val date: TextView = itemView.date
         private val partyName: TextView = itemView.partyName
         private val invoiceAmount: TextView = itemView.invoiceAmount
+        private val editSaleItem: View = itemView.editButton
+        private val deleteSaleItem: View = itemView.deleteButton
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-
+//            mListener?.onClick(adapterPosition, mSaleItem)
         }
 
         @SuppressLint("SetTextI18n")
-        fun bindValues(saleItem: SaleItem) {
+        fun bindValues(
+            saleItem: SaleItem,
+            listener: RecyclerViewInterface
+        ) {
             invoiceNumber.text = saleItem.invoiceNumber
             date.text = Common.getFormattedDate(Constant.dateFormat, saleItem.date)
             partyName.text = saleItem.partyName
             invoiceAmount.text = "₹ ${saleItem.totalInvoiceAmount}"
+            deleteSaleItem.setOnClickListener {
+                listener.onAction(adapterPosition, Actions.Delete, saleItem.invoiceId.toString())
+            }
+            editSaleItem.setOnClickListener {
+                listener.onAction(adapterPosition, Actions.Edit, saleItem)
+            }
         }
 
     }
@@ -51,6 +66,6 @@ class SalesListAdapter(var salesList: List<SaleItem>) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bindValues(salesList[position])
+        holder.bindValues(salesList[position], listener)
     }
 }

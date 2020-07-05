@@ -30,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/invoiceNumberLabel"
@@ -70,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="8dp" />
+            app:layout_constraintGuide_end="50dp" />
 
         <TextView
             android:id="@+id/partyNameLabel"
@@ -117,5 +118,31 @@
             app:layout_constraintStart_toEndOf="@+id/amountLabel"
             app:layout_constraintTop_toTopOf="@+id/amountLabel"
             tools:text="@tools:sample/us_zipcodes" />
+
+        <ImageButton
+            android:id="@+id/editButton"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@null"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/deleteButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_edit_24" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@null"
+            android:tint="@color/header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/editButton"
+            app:srcCompat="@drawable/ic_baseline_delete_forever_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

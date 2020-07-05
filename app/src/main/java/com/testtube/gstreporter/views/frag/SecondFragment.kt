@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.SaleItem
@@ -23,6 +24,8 @@ class SecondFragment : Fragment() {
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
 
+    val args: SecondFragmentArgs by navArgs()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +37,9 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rootView = view;
+        if (args.sale != null) {
+            saleItem = args.sale!!
+        }
         initViews(view)
     }
 
@@ -46,6 +52,15 @@ class SecondFragment : Fragment() {
         view.save.setOnClickListener {
             this.view?.let { v -> validate(v) }
         }
+
+        view.gstNumber.setText(saleItem.gstNumber)
+        view.partyName.setText(saleItem.partyName)
+        view.taxableAmount.setText(saleItem.taxableAmount.toString())
+        view.sGST.setText(saleItem.sGST.toString())
+        view.cGST.setText(saleItem.cGST.toString())
+        view.iGST.setText(saleItem.iGST.toString())
+        view.tGST.setText(saleItem.tGST.toString())
+        view.totalInvoiceAmount.setText(saleItem.totalInvoiceAmount.toString())
     }
 
     private fun openDateSelector() {
@@ -98,6 +113,7 @@ class SecondFragment : Fragment() {
             totalInvoiceAmount.isBlank() -> return
             else -> {
                 saleItem = SaleItem(
+                    saleItem.invoiceId,
                     invoiceNumber,
                     gstNumber,
                     partyName,

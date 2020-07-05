@@ -1,6 +1,7 @@
 package com.testtube.gstreporter.views.frag
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +12,18 @@ import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.views.adapters.SalesListAdapter
+import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
+import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
 import kotlinx.android.synthetic.main.fragment_first.view.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(), RecyclerViewInterface {
 
     private var saleList: MutableList<SaleItem> = ArrayList()
     lateinit var saleListAdapter: SalesListAdapter
+    lateinit var itemCollectionAdapter: ItemCollectionAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,28 +39,42 @@ class FirstFragment : Fragment() {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
         view.docRecyclerView.layoutManager = LinearLayoutManager(context);
-        saleListAdapter = SalesListAdapter(saleList)
+        saleListAdapter = SalesListAdapter(saleList, this)
         view.docRecyclerView.adapter = saleListAdapter
-
+        itemCollectionAdapter = context?.let { ItemCollectionAdapter(it) }!!
         getAllDocuments()
 
     }
 
     private fun getAllDocuments() {
         saleList.clear()
-        context?.let {
-            ItemCollectionAdapter(it).getAllDocuments().addOnSuccessListener { querySnapshot ->
-                querySnapshot.documents.forEach { document ->
-                    document?.toObject(SaleItem::class.java).let { it1 ->
-                        it1?.let { it2 ->
-                            saleList.add(it2)
-                        }
+        itemCollectionAdapter.getAllDocuments().addOnSuccessListener { querySnapshot ->
+            querySnapshot.documents.forEach { document ->
+                document?.toObject(SaleItem::class.java).let { it1 ->
+                    it1?.let { it2 ->
+                        saleList.add(it2)
                     }
                 }
-                if (saleList.size > 0) {
-                    saleListAdapter.notifyDataSetChanged()
-                }
+            }
+            saleListAdapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun onAction(pos: Int, actionId: Actions, data: Any) {
+        when (actionId) {
+            Actions.Delete -> {
+                itemCollectionAdapter.deleteSaleItem(data as String)
+                Handler().postDelayed({
+                    getAllDocuments()
+                }, 500)
+            }
+            Actions.Edit -> {
+                val saleItem: SaleItem = data as SaleItem
+                val actionFirstFragmentToSecondFragment =
+                    FirstFragmentDirections.actionFirstFragmentToSecondFragment(saleItem)
+                findNavController().navigate(actionFirstFragmentToSecondFragment);
             }
         }
     }
+
 }

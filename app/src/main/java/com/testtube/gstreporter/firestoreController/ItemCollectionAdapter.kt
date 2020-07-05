@@ -27,6 +27,10 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
 
     fun getAllDocuments(): Task<QuerySnapshot> = db.collection(saleCollection).get()
 
+    fun deleteSaleItem(id: String) {
+        db.collection(saleCollection).document(id).delete();
+    }
+
     override fun onFailure(p0: Exception) {
         Common.showToast(context, "Failed ${p0.message}")
     }
