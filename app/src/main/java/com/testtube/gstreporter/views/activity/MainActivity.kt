@@ -34,7 +34,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        if (FirebaseAuth.getInstance().currentUser != null)
+            finish()
+        else onBackPressed()
         return true;
     }
 
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> {
                 if (navController.currentDestination?.id == R.id.FirstFragment) {
                     FirebaseAuth.getInstance().signOut()
-                    var intent: Intent = Intent(applicationContext, MainActivity::class.java)
+                    var intent = Intent(applicationContext, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     startActivity(intent)
