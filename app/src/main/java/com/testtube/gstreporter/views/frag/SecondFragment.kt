@@ -102,15 +102,42 @@ class SecondFragment : Fragment() {
         val totalInvoiceAmount = view.totalInvoiceAmount.text.toString()
 
         when {
-            invoiceNumber.isBlank() -> return
-            gstNumber.isBlank() -> return
-            partyName.isBlank() -> return
-            taxableAmount.isBlank() -> return
-            sGST.isBlank() -> return
-            cGST.isBlank() -> return
-            iGST.isBlank() -> return
-            tGST.isBlank() -> return
-            totalInvoiceAmount.isBlank() -> return
+            invoiceNumber.isBlank() -> {
+                view.invoiceNumber.error = getString(R.string.required)
+                return
+            }
+            gstNumber.isBlank() -> {
+                view.gstNumber.error = getString(R.string.required)
+                return
+            }
+            partyName.isBlank() -> {
+                view.partyName.error = getString(R.string.required)
+                return
+            }
+            taxableAmount.isBlank() -> {
+                view.taxableAmount.error = getString(R.string.required)
+                return
+            }
+            sGST.isBlank() -> {
+                view.sGST.error = getString(R.string.required)
+                return
+            }
+            cGST.isBlank() -> {
+                view.cGST.error = getString(R.string.required)
+                return
+            }
+            iGST.isBlank() -> {
+                view.iGST.error = getString(R.string.required)
+                return
+            }
+            tGST.isBlank() -> {
+                view.tGST.error = getString(R.string.required)
+                return
+            }
+            totalInvoiceAmount.isBlank() -> {
+                view.totalInvoiceAmount.error = getString(R.string.required)
+                return
+            }
             else -> {
                 saleItem = SaleItem(
                     saleItem.invoiceId,

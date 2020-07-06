@@ -10,5 +10,6 @@
     <string name="date">Date :</string>
     <string name="party_name">Party Name :</string>
     <string name="invoice_amount">Invoice Amount :</string>
+    <string name="required">Required</string>
 
 </resources>

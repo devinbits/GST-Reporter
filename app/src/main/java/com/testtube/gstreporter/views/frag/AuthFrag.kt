@@ -7,12 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
-import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.R
+import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Prefs
 
 /**
@@ -44,9 +43,6 @@ class AuthFrag : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        when {
-            FirebaseAuth.getInstance().currentUser != null -> findNavController().navigate(R.id.action_authFrag_to_FirstFragment)
-        }
         view.findViewById<View>(R.id.button_sign_in).setOnClickListener(View.OnClickListener {
             startAuth()
         })
@@ -78,7 +74,6 @@ class AuthFrag : Fragment() {
                 val user = FirebaseAuth.getInstance().currentUser
                 user?.email?.let { context?.let { context -> Prefs.setUser(context,userEmail = it) } }
                 Common.showToast(context, " Welcome ${user?.displayName}")
-                findNavController().navigate(R.id.action_authFrag_to_FirstFragment)
             } else {
                 Common.showToast(context, "Failed- ${response?.error?.errorCode}")
             }

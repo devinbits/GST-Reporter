@@ -5,6 +5,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,15 +16,19 @@ import com.testtube.gstreporter.views.adapters.SalesListAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
 import kotlinx.android.synthetic.main.fragment_first.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment(), RecyclerViewInterface {
+class FirstFragment : Fragment(), RecyclerViewInterface,
+    androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
     private var saleList: MutableList<SaleItem> = ArrayList()
     lateinit var saleListAdapter: SalesListAdapter
     lateinit var itemCollectionAdapter: ItemCollectionAdapter
+    lateinit var searchView: SearchView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,10 +48,10 @@ class FirstFragment : Fragment(), RecyclerViewInterface {
         view.docRecyclerView.adapter = saleListAdapter
         itemCollectionAdapter = context?.let { ItemCollectionAdapter(it) }!!
         getAllDocuments()
-
     }
 
     private fun getAllDocuments() {
+        view?.progress_circular?.visibility = View.VISIBLE
         saleList.clear()
         itemCollectionAdapter.getAllDocuments().addOnSuccessListener { querySnapshot ->
             querySnapshot.documents.forEach { document ->
@@ -57,6 +62,13 @@ class FirstFragment : Fragment(), RecyclerViewInterface {
                 }
             }
             saleListAdapter.notifyDataSetChanged()
+            if (saleList.isEmpty())
+                view?.searchView?.visibility = View.GONE
+            else {
+                view?.searchView?.visibility = View.VISIBLE
+                view?.searchView?.setOnQueryTextListener(this)
+            }
+            view?.progress_circular?.visibility = View.GONE
         }
     }
 
@@ -75,6 +87,15 @@ class FirstFragment : Fragment(), RecyclerViewInterface {
                 findNavController().navigate(actionFirstFragmentToSecondFragment);
             }
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        saleListAdapter.filter(newText?.toLowerCase(Locale.getDefault()))
+        return false
     }
 
 }

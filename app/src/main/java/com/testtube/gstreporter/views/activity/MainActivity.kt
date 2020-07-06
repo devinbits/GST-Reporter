@@ -1,6 +1,5 @@
 package com.testtube.gstreporter.views.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.testtube.gstreporter.R
+import com.testtube.gstreporter.utils.Prefs
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -31,12 +31,17 @@ class MainActivity : AppCompatActivity() {
                 else -> supportActionBar?.setTitle(getString(R.string.app_name))
             }
         })
+
+        FirebaseAuth.getInstance().addAuthStateListener {
+            if (it.currentUser == null) {
+                navController.navigate(R.id.action_FirstFragment_to_AuthFrag)
+            } else if (navController.currentDestination?.id != R.id.FirstFragment)
+                navController.navigate(R.id.action_authFrag_to_FirstFragment)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        if (FirebaseAuth.getInstance().currentUser != null)
-            finish()
-        else onBackPressed()
+        onBackPressed()
         return true;
     }
 
@@ -50,13 +55,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                if (navController.currentDestination?.id == R.id.FirstFragment) {
-                    FirebaseAuth.getInstance().signOut()
-                    var intent = Intent(applicationContext, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    startActivity(intent)
-                }
+                Prefs.clearPrefs(applicationContext)
+                FirebaseAuth.getInstance().signOut()
                 return true
             }
             else -> super.onOptionsItemSelected(item)

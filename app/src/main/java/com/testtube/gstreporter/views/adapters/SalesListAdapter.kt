@@ -13,11 +13,13 @@ import com.testtube.gstreporter.utils.Constant
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
 import kotlinx.android.synthetic.main.sale_item.view.*
+import java.util.*
 
 class SalesListAdapter(
     private var salesList: List<SaleItem>, private var listener: RecyclerViewInterface
-) :
-    RecyclerView.Adapter<SalesListAdapter.MyViewHolder>() {
+) : RecyclerView.Adapter<SalesListAdapter.MyViewHolder>() {
+
+    val rawItems: List<SaleItem> = salesList
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
@@ -67,5 +69,20 @@ class SalesListAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.bindValues(salesList[position], listener)
+    }
+
+    fun filter(query: String?) {
+        salesList = if (query?.length!! > 0)
+            rawItems.filter { saleItem ->
+                saleItem.invoiceNumber.contains(query)
+                        || Common.getFormattedDate(Constant.dateFormat, saleItem.date)
+                    .toLowerCase(Locale.getDefault())
+                    .contains(query)
+                        || saleItem.gstNumber.toLowerCase(Locale.getDefault()).contains(query)
+                        || saleItem.partyName.toLowerCase(Locale.getDefault()).contains(query)
+                        || saleItem.totalInvoiceAmount.toString().contains(query)
+            }
+        else rawItems
+        notifyDataSetChanged()
     }
 }
