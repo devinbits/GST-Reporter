@@ -11,12 +11,16 @@ import com.testtube.gstreporter.R
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 
-class BolImageRecyclerViewAdapter(
+class ImageRecyclerViewAdapter(
     var context: Context,
-    var paths: MutableList<String?>
-) :
-    RecyclerView.Adapter<BolImageRecyclerViewAdapter.ViewHolder>() {
     var clickListener: RecyclerViewInterface? = null
+) :
+    RecyclerView.Adapter<ImageRecyclerViewAdapter.ViewHolder>() {
+    var paths: MutableList<String?> = mutableListOf<String?>()
+
+    init {
+        init()
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -52,6 +56,11 @@ class BolImageRecyclerViewAdapter(
 
     fun removeAll() {
         paths.clear()
+        paths.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun init() {
         paths.add(null)
         notifyDataSetChanged()
     }

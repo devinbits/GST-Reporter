@@ -7,7 +7,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 android {
     signingConfigs {
         main {
-            storeFile file('C:\\Users\\91930\\Documents\\GSTReporter\\signkey.jks')
+            storeFile file('../signkey.jks')
             storePassword 'aditya201'
             keyAlias = 'prod'
             keyPassword 'aditya201'

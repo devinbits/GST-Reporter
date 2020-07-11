@@ -11,5 +11,6 @@
     <string name="party_name">Party Name :</string>
     <string name="invoice_amount">Invoice Amount :</string>
     <string name="required">Required</string>
+    <string name="image_capture_error">Error! Unable to save image</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.testtube.gstreporter.views.frag
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,19 +9,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
+import com.testtube.gstreporter.utils.Prefs
+import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
+import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.util.*
+
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class SecondFragment : Fragment() {
+class SecondFragment : Fragment(), RecyclerViewInterface {
 
+    private var fileAbsPath: String? = "";
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
 
@@ -61,6 +69,22 @@ class SecondFragment : Fragment() {
         view.iGST.setText(saleItem.iGST.toString())
         view.tGST.setText(saleItem.tGST.toString())
         view.totalInvoiceAmount.setText(saleItem.totalInvoiceAmount.toString())
+        view.includeImageCheckBox.setOnClickListener {
+            if (!view.includeImageCheckBox.isChecked) {
+                view.rv_container.visibility = View.GONE
+            } else {
+                setImageRecyclerView(view)
+            }
+        }
+    }
+
+    private fun setImageRecyclerView(view: View) {
+        view.rv_container.visibility = View.VISIBLE
+        view.recyclerView.layoutManager =
+            LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        context?.let {
+            view.recyclerView.adapter = ImageRecyclerViewAdapter(it, this)
+        }
     }
 
     private fun openDateSelector() {
@@ -156,5 +180,21 @@ class SecondFragment : Fragment() {
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
         }
+    }
+
+    override fun onAction(pos: Int, actionId: RecyclerViewInterface.Actions, data: Any) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onClick(pos: Int) {
+        val filename = context?.let { Prefs.getUser(it) } + System.currentTimeMillis()
+        Common.startPictureCaptureIntentFragment(this, 0, filename)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if (resultCode == RESULT_OK) {
+//            if (fileAbsPath != null) {
+//            }
+//        } else Common.showToast(mContext, R.string.error_fetch_image_camera)
     }
 }
