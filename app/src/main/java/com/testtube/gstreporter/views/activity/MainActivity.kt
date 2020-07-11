@@ -24,10 +24,14 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.nav_host_fragment)
         navController.addOnDestinationChangedListener(NavController.OnDestinationChangedListener
         { controller, destination, arguments ->
+            supportActionBar?.show()
             when (destination.id) {
                 R.id.SecondFragment -> supportActionBar?.setTitle(
                     getString(R.string.new_sale)
                 )
+                R.id.AuthFrag -> {
+                    supportActionBar?.hide()
+                }
                 else -> supportActionBar?.setTitle(getString(R.string.app_name))
             }
         })

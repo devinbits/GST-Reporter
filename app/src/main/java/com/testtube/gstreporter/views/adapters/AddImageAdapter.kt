@@ -39,7 +39,7 @@ class ImageRecyclerViewAdapter(
             val bitmap: Bitmap? = Common.grabBitMapfromFileAsync(context, paths[position], 96)
             if (bitmap != null) {
                 holder.imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-                holder.imageView.setImageBitmap(bitmap)
+                holder.imageView.setImageBitmap(Common.getCircularCroppedImage(bitmap))
                 holder.itemView.tag = true
             } else {
                 holder.itemView.tag = false
@@ -63,6 +63,16 @@ class ImageRecyclerViewAdapter(
     fun init() {
         paths.add(null)
         notifyDataSetChanged()
+    }
+
+    fun getImagePathList(): MutableList<String?> {
+        return paths
+    }
+
+    fun addImagePath(path: String): Int {
+        paths.add(paths.size - 1, path)
+        notifyDataSetChanged()
+        return paths.size-1
     }
 
     inner class ViewHolder(itemView: View) :

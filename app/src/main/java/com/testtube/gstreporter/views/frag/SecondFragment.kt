@@ -1,5 +1,6 @@
 package com.testtube.gstreporter.views.frag
 
+import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.testtube.gstreporter.utils.Constant
 import com.testtube.gstreporter.utils.Prefs
 import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
+import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.util.*
 
@@ -31,6 +33,7 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
     private var fileAbsPath: String? = "";
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
+    private lateinit var imageRecyclerViewAdapter: ImageRecyclerViewAdapter
 
     val args: SecondFragmentArgs by navArgs()
 
@@ -83,7 +86,8 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
         view.recyclerView.layoutManager =
             LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         context?.let {
-            view.recyclerView.adapter = ImageRecyclerViewAdapter(it, this)
+            imageRecyclerViewAdapter = ImageRecyclerViewAdapter(it, this)
+            view.recyclerView.adapter = imageRecyclerViewAdapter
         }
     }
 
@@ -188,13 +192,14 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
 
     override fun onClick(pos: Int) {
         val filename = context?.let { Prefs.getUser(it) } + System.currentTimeMillis()
-        Common.startPictureCaptureIntentFragment(this, 0, filename)
+        fileAbsPath = Common.startPictureCaptureIntentFragment(this, 0, filename)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        if (resultCode == RESULT_OK) {
-//            if (fileAbsPath != null) {
-//            }
-//        } else Common.showToast(mContext, R.string.error_fetch_image_camera)
+        if (resultCode == RESULT_OK) {
+            val lastPosition = imageRecyclerViewAdapter.addImagePath(fileAbsPath!!)
+            recyclerView.scrollToPosition(lastPosition)
+            fileAbsPath = null
+        } else Common.showToast(context, R.string.image_capture_error)
     }
 }

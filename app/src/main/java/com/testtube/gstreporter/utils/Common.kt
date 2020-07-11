@@ -3,8 +3,7 @@ package com.testtube.gstreporter.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.AsyncTask
@@ -149,6 +148,26 @@ class Common {
                 ".jpg",  /* suffix */
                 storageDir /* directory */
             )
+        }
+
+        @JvmStatic
+        fun getCircularCroppedImage(bitmap: Bitmap): Bitmap? {
+            val output = Bitmap.createBitmap(
+                bitmap.width,
+                bitmap.height, Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(output)
+            val paint = Paint()
+            val rect = Rect(0, 0, bitmap.width, bitmap.height)
+            paint.setAntiAlias(true)
+            canvas.drawARGB(0, 0, 0, 0)
+            canvas.drawCircle(
+                (bitmap.width / 2).toFloat(), (bitmap.height / 2).toFloat(),
+                (Math.min(bitmap.width, bitmap.height) / 2).toFloat(), paint
+            )
+            paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
+            canvas.drawBitmap(bitmap, rect, rect, paint)
+            return output
         }
 
     }

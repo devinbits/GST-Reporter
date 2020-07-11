@@ -21,7 +21,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/invoice"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,8 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/invoiceNumberLabel"
             app:layout_constraintTop_toTopOf="@+id/invoiceNumberLabel"
@@ -44,7 +43,6 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
             android:text="@string/date"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/invoiceNumberLabel"
             app:layout_constraintTop_toBottomOf="@+id/invoiceNumber" />
 
@@ -53,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/invoiceNumber"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/dateLabel"
@@ -71,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="50dp" />
+            app:layout_constraintGuide_end="42dp" />
 
         <TextView
             android:id="@+id/partyNameLabel"
@@ -80,7 +79,6 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
             android:text="@string/party_name"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/dateLabel"
             app:layout_constraintTop_toBottomOf="@+id/dateLabel" />
 
@@ -89,6 +87,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/partyNameLabel"
@@ -103,7 +103,6 @@
             android:layout_marginBottom="8dp"
             android:fontFamily="sans-serif"
             android:text="@string/invoice_amount"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/partyNameLabel"
             app:layout_constraintTop_toBottomOf="@+id/partyNameLabel" />
@@ -113,6 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/amountLabel"
@@ -120,31 +120,17 @@
             tools:text="@tools:sample/us_zipcodes" />
 
         <ImageButton
-            android:id="@+id/editButton"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@null"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:tint="@color/colorPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/deleteButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_edit_24" />
-
-        <ImageButton
             android:id="@+id/deleteButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:background="@null"
             android:foreground="?android:attr/selectableItemBackground"
-            android:tint="@color/header"
+            android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/editButton"
-            app:srcCompat="@drawable/ic_baseline_delete_forever_24" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_baseline_delete_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

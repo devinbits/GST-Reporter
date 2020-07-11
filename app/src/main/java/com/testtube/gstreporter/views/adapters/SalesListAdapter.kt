@@ -21,22 +21,13 @@ class SalesListAdapter(
 
     val rawItems: List<SaleItem> = salesList
 
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val invoiceNumber: TextView = itemView.invoiceNumber
         private val date: TextView = itemView.date
         private val partyName: TextView = itemView.partyName
         private val invoiceAmount: TextView = itemView.invoiceAmount
-        private val editSaleItem: View = itemView.editButton
         private val deleteSaleItem: View = itemView.deleteButton
-
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-//            mListener?.onClick(adapterPosition, mSaleItem)
-        }
 
         @SuppressLint("SetTextI18n")
         fun bindValues(
@@ -50,7 +41,7 @@ class SalesListAdapter(
             deleteSaleItem.setOnClickListener {
                 listener.onAction(adapterPosition, Actions.Delete, saleItem.invoiceId.toString())
             }
-            editSaleItem.setOnClickListener {
+            itemView.setOnClickListener {
                 listener.onAction(adapterPosition, Actions.Edit, saleItem)
             }
         }

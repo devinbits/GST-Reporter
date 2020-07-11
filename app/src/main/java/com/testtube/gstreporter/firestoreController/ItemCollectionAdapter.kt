@@ -12,7 +12,7 @@ import com.testtube.gstreporter.utils.Prefs
 class ItemCollectionAdapter(val context: Context) : OnFailureListener {
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val root: String = "users/${Prefs.getUser(context)}"
+    private val root: String = "users/${Prefs.getUserId(context)}"
     private val saleCollection: String = "${root}/sales"
 
     fun saveItem(saleItem: SaleItem) {

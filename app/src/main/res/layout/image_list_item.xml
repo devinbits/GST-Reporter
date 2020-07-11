@@ -3,7 +3,7 @@
     android:id="@+id/input_bol_image"
     android:layout_width="80dp"
     android:layout_height="80dp"
+    android:layout_margin="5dp"
     android:background="@drawable/circle_border"
-    android:padding="5dp"
     android:scaleType="centerInside"
     android:src="@drawable/ic_baseline_photo_camera_24" />
