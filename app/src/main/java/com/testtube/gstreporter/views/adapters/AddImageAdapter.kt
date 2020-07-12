@@ -65,14 +65,14 @@ class ImageRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun getImagePathList(): MutableList<String?> {
-        return paths
+    fun getImagePathList(): List<String?> {
+        return paths.filter { it !=null }
     }
 
     fun addImagePath(path: String): Int {
         paths.add(paths.size - 1, path)
         notifyDataSetChanged()
-        return paths.size-1
+        return paths.size - 1
     }
 
     inner class ViewHolder(itemView: View) :
@@ -83,7 +83,8 @@ class ImageRecyclerViewAdapter(
             val tag: Boolean = v.tag as Boolean
             if (!tag) {
                 clickListener!!.onClick(adapterPosition)
-            }
+            } else
+                clickListener!!.onClick(adapterPosition, paths.get(adapterPosition)!!)
         }
 
         init {

@@ -12,5 +12,19 @@
     <string name="invoice_amount">Invoice Amount :</string>
     <string name="required">Required</string>
     <string name="image_capture_error">Error! Unable to save image</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save">Save</string>
+    <string name="include_images">Include Images</string>
+    <string name="total_invoice_amount">Total Invoice Amount</string>
+    <string name="total_gst">Total GST</string>
+    <string name="igst">IGST %</string>
+    <string name="cgst">CGST %</string>
+    <string name="sgst">SGST %</string>
+    <string name="i_date">Date</string>
+    <string name="taxable_amount">Taxable Amount</string>
+    <string name="i_party_name">Party Name</string>
+    <string name="i_gst_number">GST Number</string>
+    <string name="i_invoice_number">Invoice Number</string>
 
 </resources>

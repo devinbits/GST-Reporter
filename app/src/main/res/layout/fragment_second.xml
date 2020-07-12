@@ -1,255 +1,260 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.frag.SecondFragment">
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:context=".views.frag.SecondFragment">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/invoiceNumber_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:hint="Invoice Number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:animateLayoutChanges="true">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/invoiceNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/gstNumber_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="GST Number"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/invoiceNumber_layout">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/gstNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/partyName_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Party Name"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/gstNumber_layout">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/partyName"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/invoiceNumber_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/i_invoice_number"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/invoiceNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/taxableAmount_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Taxable Amount"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/partyName_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/taxableAmount"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/gstNumber_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:layout_marginTop="8dp"
+                android:hint="@string/i_gst_number"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/invoiceNumber_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/gstNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/date_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Date"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/taxableAmount_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/date"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/partyName_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="false"
-                android:inputType="date" />
+                android:layout_marginTop="8dp"
+                android:hint="@string/i_party_name"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/gstNumber_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/partyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/sGST_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="SGST %"
-            app:layout_constraintEnd_toStartOf="@+id/cGST_layout"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/date_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/sGST"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/taxableAmount_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:layout_marginTop="8dp"
+                android:hint="@string/taxable_amount"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/partyName_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/taxableAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/cGST_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:hint="CGST %"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintEnd_toStartOf="@+id/iGST_layout"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/sGST_layout"
-            app:layout_constraintTop_toTopOf="@+id/sGST_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/cGST"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/date_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:layout_marginTop="8dp"
+                android:hint="@string/i_date"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/taxableAmount_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:inputType="date" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/iGST_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="IGST %"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toEndOf="@+id/cGST_layout"
-            app:layout_constraintTop_toTopOf="@+id/sGST_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/iGST"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/sGST_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:layout_marginTop="8dp"
+                android:hint="@string/sgst"
+                app:layout_constraintEnd_toStartOf="@+id/cGST_layout"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/date_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/sGST"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tGST_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Total GST"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/iGST_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tGST"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/cGST_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/cgst"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintEnd_toStartOf="@+id/iGST_layout"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/sGST_layout"
+                app:layout_constraintTop_toTopOf="@+id/sGST_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/cGST"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/t_invoice_layout"
-            style="@style/TextInputStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Total Invoice Amount"
-            app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
-            app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
-            app:layout_constraintTop_toBottomOf="@+id/tGST_layout">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/totalInvoiceAmount"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/iGST_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:hint="@string/igst"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toEndOf="@+id/cGST_layout"
+                app:layout_constraintTop_toTopOf="@+id/sGST_layout">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/iGST"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
 
-        <CheckBox
-            android:id="@+id/includeImageCheckBox"
-            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:checked="false"
-            android:text="Include Images"
-            app:layout_constraintEnd_toEndOf="@+id/t_invoice_layout"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/t_invoice_layout"
-            app:layout_constraintTop_toBottomOf="@+id/t_invoice_layout" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/rv_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/t_invoice_layout"
-            app:layout_constraintStart_toStartOf="@+id/t_invoice_layout"
-            app:layout_constraintTop_toBottomOf="@+id/includeImageCheckBox">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tGST_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/total_gst"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/iGST_layout">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                tools:listitem="@layout/image_list_item" />
-        </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tGST"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/save"
-            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Save"
-            app:backgroundTint="@color/colorAccent"
-            app:cornerRadius="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_container" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/t_invoice_layout"
+                style="@style/TextInputStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/total_invoice_amount"
+                app:layout_constraintEnd_toEndOf="@+id/invoiceNumber_layout"
+                app:layout_constraintStart_toStartOf="@+id/invoiceNumber_layout"
+                app:layout_constraintTop_toBottomOf="@+id/tGST_layout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/totalInvoiceAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <CheckBox
+                android:id="@+id/includeImageCheckBox"
+                style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:checked="false"
+                android:text="@string/include_images"
+                app:layout_constraintEnd_toEndOf="@+id/t_invoice_layout"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/t_invoice_layout"
+                app:layout_constraintTop_toBottomOf="@+id/t_invoice_layout" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rv_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/t_invoice_layout"
+                app:layout_constraintStart_toStartOf="@+id/t_invoice_layout"
+                app:layout_constraintTop_toBottomOf="@+id/includeImageCheckBox">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    tools:listitem="@layout/image_list_item" />
+            </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/save"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/save"
+        app:backgroundTint="@color/colorAccent"
+        app:cornerRadius="4dp" />
+
+</LinearLayout>

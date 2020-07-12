@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().addAuthStateListener {
             if (it.currentUser == null) {
                 navController.navigate(R.id.action_FirstFragment_to_AuthFrag)
-            } else if (navController.currentDestination?.id != R.id.FirstFragment)
+            } else if (navController.currentDestination?.id == R.id.AuthFrag)
                 navController.navigate(R.id.action_authFrag_to_FirstFragment)
         }
     }

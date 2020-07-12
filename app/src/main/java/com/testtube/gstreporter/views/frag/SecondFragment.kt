@@ -12,18 +12,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
-import com.testtube.gstreporter.utils.Prefs
 import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
+import com.testtube.gstreporter.workers.FirebaseStorageFileUpload
 import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.util.*
-
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -76,19 +78,16 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             if (!view.includeImageCheckBox.isChecked) {
                 view.rv_container.visibility = View.GONE
             } else {
-                setImageRecyclerView(view)
+                view.rv_container.visibility = View.VISIBLE
             }
         }
-    }
-
-    private fun setImageRecyclerView(view: View) {
-        view.rv_container.visibility = View.VISIBLE
-        view.recyclerView.layoutManager =
-            LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        context?.let {
-            imageRecyclerViewAdapter = ImageRecyclerViewAdapter(it, this)
+        context?.let { context ->
+            view.recyclerView.layoutManager =
+                LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            imageRecyclerViewAdapter = ImageRecyclerViewAdapter(context, this)
             view.recyclerView.adapter = imageRecyclerViewAdapter
         }
+
     }
 
     private fun openDateSelector() {
@@ -180,7 +179,20 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
                     tGST.toDouble(),
                     totalInvoiceAmount.toDouble()
                 )
-                context?.let { context -> ItemCollectionAdapter(context).saveItem(saleItem) }
+                context?.let { context ->
+                    ItemCollectionAdapter(context).saveItem(saleItem)
+                    if (includeImageCheckBox.isChecked)
+                        for (path in imageRecyclerViewAdapter.getImagePathList()) {
+                            val data = Data.Builder()
+                                .putString("path", path)
+                                .putString("inv", invoiceNumber)
+                                .build();
+                            val req = OneTimeWorkRequestBuilder<FirebaseStorageFileUpload>()
+                                .setInputData(data)
+                                .build()
+                            WorkManager.getInstance(context).enqueue(req)
+                        }
+                }
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
         }
@@ -191,8 +203,14 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
     }
 
     override fun onClick(pos: Int) {
-        val filename = context?.let { Prefs.getUser(it) } + System.currentTimeMillis()
+        val filename = Common.getUser() + System.currentTimeMillis() / 1000
         fileAbsPath = Common.startPictureCaptureIntentFragment(this, 0, filename)
+    }
+
+    override fun onClick(pos: Int, data: Any) {
+        val filePath: String = data as String
+        val action = SecondFragmentDirections.actionSecondFragmentToImageViewerFrag(filePath)
+        findNavController().navigate(action);
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -38,6 +38,9 @@
             android:defaultValue="@null"
             app:argType="com.testtube.gstreporter.model.SaleItem"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_SecondFragment_to_imageViewerFrag"
+            app:destination="@id/imageViewerFrag" />
     </fragment>
     <fragment
         android:id="@+id/AuthFrag"
@@ -55,4 +58,14 @@
             android:autoVerify="true"
             app:uri="auth" />
     </fragment>
+    <dialog
+        android:id="@+id/imageViewerFrag"
+        android:name="com.testtube.gstreporter.views.frag.ImageViewerFrag"
+        android:label="fragment_image_viewer"
+        tools:layout="@layout/fragment_image_viewer">
+        <argument
+            android:name="filePath"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
 </navigation>

@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -46,7 +47,7 @@ class Common {
         public fun grabBitMapfromFileAsync(
             mContext: Context?,
             filePath: String?,
-            thumbNailSize: Int
+            thumbNailSize: Int = 0
         ): Bitmap? {
             return object : AsyncTask<Void?, Void?, Bitmap?>() {
                 override fun doInBackground(vararg params: Void?): Bitmap? {
@@ -168,6 +169,11 @@ class Common {
             paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
             canvas.drawBitmap(bitmap, rect, rect, paint)
             return output
+        }
+
+        @JvmStatic
+        fun getUser(): String? {
+            return FirebaseAuth.getInstance().currentUser?.email
         }
 
     }

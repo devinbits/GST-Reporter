@@ -12,7 +12,6 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.utils.Common
-import com.testtube.gstreporter.utils.Prefs
 
 /**
  * A simple [Fragment] subclass.
@@ -72,7 +71,6 @@ class AuthFrag : Fragment() {
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 val user = FirebaseAuth.getInstance().currentUser
-                user?.email?.let { context?.let { context -> Prefs.setUser(context,userEmail = it) } }
                 Common.showToast(context, " Welcome ${user?.displayName}")
             } else {
                 Common.showToast(context, "Failed- ${response?.error?.errorCode}")
