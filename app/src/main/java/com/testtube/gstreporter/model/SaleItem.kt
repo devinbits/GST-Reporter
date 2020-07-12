@@ -14,7 +14,8 @@ class SaleItem(
     var cGST: Double = 0.0,
     var iGST: Double = 0.0,
     var tGST: Double = sGST + cGST + iGST,
-    var totalInvoiceAmount: Double = 0.0
+    var totalInvoiceAmount: Double = 0.0,
+    var images: List<String>? = null
 ) : Serializable {
 
     var invoiceCreatedDate: Date = Date()

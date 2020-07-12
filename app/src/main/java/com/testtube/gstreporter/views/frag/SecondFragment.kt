@@ -100,7 +100,9 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             DatePickerDialog(
                 it,
                 DatePickerDialog.OnDateSetListener { view, nyear, monthOfYear, dayOfMonth ->
-                    saleItem.date = Date(year, monthOfYear, dayOfMonth)
+                    val cal = Calendar.getInstance()
+                    cal.set(nyear, monthOfYear, dayOfMonth)
+                    saleItem.date = cal.time
                     rootView.date.setText(
                         Common.getFormattedDate(
                             Constant.dateFormat,
@@ -127,7 +129,7 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
         val iGST = view.iGST.text.toString()
         val tGST = view.tGST.text.toString()
         val totalInvoiceAmount = view.totalInvoiceAmount.text.toString()
-
+        val imagePathList = imageRecyclerViewAdapter.getImagePathList()
         when {
             invoiceNumber.isBlank() -> {
                 view.invoiceNumber.error = getString(R.string.required)
@@ -177,12 +179,13 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
                     cGST.toDouble(),
                     iGST.toDouble(),
                     tGST.toDouble(),
-                    totalInvoiceAmount.toDouble()
+                    totalInvoiceAmount.toDouble(),
+                    imagePathList.map { it -> it.split("/").last() }
                 )
                 context?.let { context ->
                     ItemCollectionAdapter(context).saveItem(saleItem)
                     if (includeImageCheckBox.isChecked)
-                        for (path in imageRecyclerViewAdapter.getImagePathList()) {
+                        for (path in imagePathList) {
                             val data = Data.Builder()
                                 .putString("path", path)
                                 .putString("inv", invoiceNumber)

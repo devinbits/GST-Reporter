@@ -65,8 +65,8 @@ class ImageRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun getImagePathList(): List<String?> {
-        return paths.filter { it !=null }
+    fun getImagePathList(): List<String> {
+        return paths.filter { it != null }.requireNoNulls()
     }
 
     fun addImagePath(path: String): Int {
