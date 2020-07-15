@@ -7,9 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.work.Data.Builder
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ProfileAdapter
 import com.testtube.gstreporter.model.Profile
@@ -52,6 +57,16 @@ class ProfileFrag : Fragment() {
         input_firm_name.setText(profile.firmName)
         input_gst_number.setText(profile.gstNumber)
         input_state.setText(profile.state)
+        selectedState = profile.state
+
+        Firebase.storage.reference.child("${Common.getUser()}/avatar.jpg").downloadUrl.addOnSuccessListener {
+            Glide.with(this /* context */)
+                .load(it!!)
+                .centerCrop()
+                .circleCrop()
+                .transition(DrawableTransitionOptions.withCrossFade(500))
+                .into(avatar_image)
+        }
     }
 
     private fun initviews(view: View) {
@@ -102,6 +117,7 @@ class ProfileFrag : Fragment() {
                     .setInputData(data)
                     .build()
                 WorkManager.getInstance(it).enqueue(req)
+                findNavController().navigate(R.id.action_FirstFragment_to_profile)
             }
         }
     }
@@ -109,11 +125,12 @@ class ProfileFrag : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             if (context != null && avatarImageTempPath != null) {
-                avatar_image.setImageBitmap(
-                    Common.getCircularCroppedImage(
-                        Common.grabBitMapfromFileAsync(context, avatarImageTempPath)!!
-                    )
-                )
+                Glide.with(this /* context */)
+                    .load(avatarImageTempPath)
+                    .centerCrop()
+                    .circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade(500))
+                    .into(avatar_image)
             }
         } else Common.showToast(context, R.string.image_capture_error)
     }

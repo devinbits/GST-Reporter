@@ -12,8 +12,7 @@
     <string name="invoice_amount">Invoice Amount :</string>
     <string name="required">Required</string>
     <string name="image_capture_error">Error! Unable to save image</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="image_dowload_error">Error! Unable to download image</string>
     <string name="save">Save</string>
     <string name="include_images">Include Images</string>
     <string name="total_invoice_amount">Total Invoice Amount</string>

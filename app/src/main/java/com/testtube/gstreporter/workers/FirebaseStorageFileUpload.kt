@@ -74,17 +74,17 @@ class FirebaseStorageFileUpload(
         val storage = Firebase.storage
         val storageRef = storage.reference
         val file = Uri.fromFile(File(path))
-        val refThumb = storageRef.child("${Common.getUser()}/avatar${file.lastPathSegment}")
+        val refThumb = storageRef.child("${Common.getUser()}/avatar.${file.lastPathSegment?.split(".")
+            ?.get(1)}")
 
         val thumbNail = Common.getCircularCroppedImage(
             Common.grabBitMapfromFileAsync(
                 applicationContext,
-                path,
-                256
+                path,0
             )!!
         )
         val baos = ByteArrayOutputStream()
-        thumbNail?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        thumbNail?.compress(Bitmap.CompressFormat.JPEG, 70, baos)
         val data = baos.toByteArray()
 
         val uploadThumbTask = refThumb.putBytes(data)
