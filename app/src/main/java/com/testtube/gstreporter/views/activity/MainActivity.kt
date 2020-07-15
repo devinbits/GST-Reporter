@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.testtube.gstreporter.R
+import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.utils.Prefs
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -37,10 +38,31 @@ class MainActivity : AppCompatActivity() {
         })
 
         FirebaseAuth.getInstance().addAuthStateListener {
-            if (it.currentUser == null) {
-                navController.navigate(R.id.action_FirstFragment_to_AuthFrag)
-            } else if (navController.currentDestination?.id == R.id.AuthFrag)
-                navController.navigate(R.id.action_authFrag_to_FirstFragment)
+            when (it.currentUser) {
+                null -> {
+                    navController.navigate(R.id.action_FirstFragment_to_AuthFrag)
+                }
+                else -> {
+                    Profile().getProfile(applicationContext).addOnCompleteListener {
+                        when {
+                            it.isSuccessful -> {
+                                val profile = it.result?.toObject(Profile::class.java)
+                                when (profile) {
+                                    null -> navController.navigate(R.id.action_AuthFrag_to_profile)
+                                    else -> when {
+                                        navController.currentDestination?.id != R.id.FirstFragment -> navController.navigate(
+                                            R.id.action_authFrag_to_FirstFragment
+                                        )
+                                    }
+                                }
+                            }
+                            else -> {
+                                navController.navigate(R.id.action_AuthFrag_to_profile)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -61,6 +83,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> {
                 Prefs.clearPrefs(applicationContext)
                 FirebaseAuth.getInstance().signOut()
+                return true
+            }
+            R.id.action_profile -> {
+                navController.navigate(R.id.action_FirstFragment_to_profile)
                 return true
             }
             else -> super.onOptionsItemSelected(item)

@@ -102,8 +102,7 @@ class Common {
 
         fun startPictureCaptureIntentFragment(
             frag: Fragment,
-            mrequestId: Int,
-            filename: String
+            mrequestId: Int
         ): String? {
             var requestId = mrequestId
             if (requestId == 0) requestId = Constants.REQUEST_IMAGE_CAPTURE_FRAG

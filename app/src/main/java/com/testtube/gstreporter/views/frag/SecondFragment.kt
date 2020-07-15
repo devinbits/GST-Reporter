@@ -206,8 +206,7 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
     }
 
     override fun onClick(pos: Int) {
-        val filename = Common.getUser() + System.currentTimeMillis() / 1000
-        fileAbsPath = Common.startPictureCaptureIntentFragment(this, 0, filename)
+        fileAbsPath = Common.startPictureCaptureIntentFragment(this, 0)
     }
 
     override fun onClick(pos: Int, data: Any) {

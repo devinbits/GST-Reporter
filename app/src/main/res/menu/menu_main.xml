@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.testtube.gstreporter.views.activity.MainActivity">
     <item
+        android:id="@+id/action_profile"
+        android:orderInCategory="0"
+        android:title="@string/profile"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:title="@string/action_logout"
         app:showAsAction="never" />
 </menu>

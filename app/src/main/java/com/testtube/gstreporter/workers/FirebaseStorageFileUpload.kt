@@ -14,45 +14,93 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 
 
-class FirebaseStorageFileUpload(appContext: Context, workerParams: WorkerParameters) :
+class FirebaseStorageFileUpload(
+    appContext: Context,
+    workerParams: WorkerParameters
+) :
     Worker(appContext, workerParams) {
 
     override fun doWork(): Result {
 
-        uploadImages(inputData)
+        if (inputData.getBoolean("is-avatar", false)) {
+            uploadAvatar(inputData)
+        } else
+            uploadInvoiceImages(inputData)
+
 
         return Result.success()
     }
 
-    private fun uploadImages(input: Data) {
+    private fun uploadInvoiceImages(input: Data) {
         val path: String = input.getString("path")!!
         val invoice: String = input.getString("inv")!!
         val storage = Firebase.storage
         val storageRef = storage.reference
         val file = Uri.fromFile(File(path))
         val ref = storageRef.child("${Common.getUser()}/${invoice}/${file.lastPathSegment}")
-        val refThumb = storageRef.child("${Common.getUser()}/${invoice}/thumb/${file.lastPathSegment}")
+        val refThumb =
+            storageRef.child("${Common.getUser()}/${invoice}/thumb/${file.lastPathSegment}")
 
         val uploadTask = ref.putFile(file)
 
-        val thumbNail = Common.getCircularCroppedImage(Common.grabBitMapfromFileAsync(applicationContext,path,96)!!)
+        val thumbNail = Common.getCircularCroppedImage(
+            Common.grabBitMapfromFileAsync(
+                applicationContext,
+                path,
+                96
+            )!!
+        )
         val baos = ByteArrayOutputStream()
         thumbNail?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
-
-        var uploadThumbTask = refThumb.putBytes(data)
+        refThumb.putBytes(data)
 
         uploadTask.continueWithTask {
-            if (it.isSuccessful) {
+            if (!it.isSuccessful) {
                 Log.e(javaClass.simpleName, "upload-image-exp: ", it.exception)
             }
             it.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.e(javaClass.simpleName, "download-url: " + task.result)
+                    Log.e(javaClass.simpleName, "download-url: success")
                 } else {
                     Log.e(javaClass.simpleName, "download-url-exp: ", task.exception)
                 }
             }
         }
     }
+
+    private fun uploadAvatar(input: Data) {
+        val path: String = input.getString("path")!!
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+        val file = Uri.fromFile(File(path))
+        val refThumb = storageRef.child("${Common.getUser()}/avatar${file.lastPathSegment}")
+
+        val thumbNail = Common.getCircularCroppedImage(
+            Common.grabBitMapfromFileAsync(
+                applicationContext,
+                path,
+                256
+            )!!
+        )
+        val baos = ByteArrayOutputStream()
+        thumbNail?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        val uploadThumbTask = refThumb.putBytes(data)
+
+        uploadThumbTask.continueWithTask {
+            if (!it.isSuccessful) {
+                Log.e(javaClass.simpleName, "upload-image-exp: ", it.exception)
+            }
+            it.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.e(javaClass.simpleName, "download-url: success")
+                } else {
+                    Log.e(javaClass.simpleName, "download-url-exp: ", task.exception)
+                }
+            }
+        }
+    }
+
 }
