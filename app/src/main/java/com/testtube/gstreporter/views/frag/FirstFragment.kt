@@ -47,29 +47,30 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
         saleListAdapter = SalesListAdapter(saleList, this)
         view.docRecyclerView.adapter = saleListAdapter
         itemCollectionAdapter = context?.let { ItemCollectionAdapter(it) }!!
-        getAllDocuments()
+        getRecentDocuments()
     }
 
-    private fun getAllDocuments() {
+    private fun getRecentDocuments() {
         view?.progress_circular?.visibility = View.VISIBLE
         saleList.clear()
-        itemCollectionAdapter.getAllDocuments().addOnSuccessListener { querySnapshot ->
-            querySnapshot.documents.forEach { document ->
-                document?.toObject(SaleItem::class.java).let { it1 ->
-                    it1?.let { it2 ->
-                        saleList.add(it2)
+        itemCollectionAdapter.getRecentDocuments()
+            .addOnSuccessListener { querySnapshot ->
+                querySnapshot.documents.forEach { document ->
+                    document?.toObject(SaleItem::class.java).let { it1 ->
+                        it1?.let { it2 ->
+                            saleList.add(it2)
+                        }
                     }
                 }
+                saleListAdapter.notifyDataSetChanged()
+                if (saleList.isEmpty())
+                    view?.searchView?.visibility = View.GONE
+                else {
+                    view?.searchView?.visibility = View.VISIBLE
+                    view?.searchView?.setOnQueryTextListener(this)
+                }
+                view?.progress_circular?.visibility = View.GONE
             }
-            saleListAdapter.notifyDataSetChanged()
-            if (saleList.isEmpty())
-                view?.searchView?.visibility = View.GONE
-            else {
-                view?.searchView?.visibility = View.VISIBLE
-                view?.searchView?.setOnQueryTextListener(this)
-            }
-            view?.progress_circular?.visibility = View.GONE
-        }
     }
 
     override fun onAction(pos: Int, actionId: Actions, data: Any) {
@@ -77,7 +78,7 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
             Actions.Delete -> {
                 itemCollectionAdapter.deleteSaleItem(data as String)
                 Handler().postDelayed({
-                    getAllDocuments()
+                    getRecentDocuments()
                 }, 500)
             }
             Actions.Edit -> {

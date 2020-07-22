@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -27,6 +28,13 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
     }
 
     fun getAllDocuments(): Task<QuerySnapshot> = db.collection(saleCollection).get()
+
+    fun getRecentDocuments(count: Long = 10): Task<QuerySnapshot> =
+        getDocumentsOrderedBy(count, "date")
+
+    fun getDocumentsOrderedBy(count: Long = 10, orderBy: String): Task<QuerySnapshot> =
+        db.collection(saleCollection).orderBy(orderBy, Query.Direction.DESCENDING).limit(count)
+            .get()
 
     fun deleteSaleItem(id: String) {
         db.collection(saleCollection).document(id).delete();

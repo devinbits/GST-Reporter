@@ -117,7 +117,7 @@ class ProfileFrag : Fragment() {
                     .setInputData(data)
                     .build()
                 WorkManager.getInstance(it).enqueue(req)
-                findNavController().navigate(R.id.action_FirstFragment_to_profile)
+                findNavController().navigateUp();
             }
         }
     }
