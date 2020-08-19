@@ -8,6 +8,7 @@
     <string name="new_sale">New Sale</string>
     <string name="invoice">Invoice# :</string>
     <string name="date">Date :</string>
+    <string name="date_tab">Date</string>
     <string name="party_name">Party Name :</string>
     <string name="invoice_amount">Invoice Amount :</string>
     <string name="required">Required</string>
@@ -28,8 +29,30 @@
     <string name="name">Name</string>
     <string name="firm_name">Firm Name</string>
     <string name="input_gst_number">GST Number</string>
-    <string name="select_state">Select State</string>
+    <string name="select_state">State</string>
     <string name="profile">Profile</string>
+    <string name="month">Month</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="select_date">Select Date</string>
+    <string name="ok">OK</string>
+    <string name="export">Export</string>
+    <string name="export_all_data">Yes, Delete Data</string>
+
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
 
     <string-array name="states">
         <item>Andaman and Nicobar Islands</item>

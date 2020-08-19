@@ -8,5 +8,7 @@
     <color name="cardBack">#FFFFFF</color>
     <color name="red">#FF7E7B</color>
     <color name="grey">#45000000</color>
+    <color name="grey_light">#23000000</color>
+    <color name="grey_light_1">#12000000</color>
     <color name="grey_dark">#77000000</color>
 </resources>

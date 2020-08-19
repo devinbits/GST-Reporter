@@ -34,12 +34,12 @@ class SalesListAdapter(
             saleItem: SaleItem,
             listener: RecyclerViewInterface
         ) {
-            invoiceNumber.text = saleItem.invoiceNumber
-            date.text = Common.getFormattedDate(Constant.dateFormat, saleItem.date)
-            partyName.text = saleItem.partyName
-            invoiceAmount.text = "₹ ${saleItem.totalInvoiceAmount}"
+            invoiceNumber.text = saleItem.Invoice_Number
+            date.text = Common.getFormattedDate(Constant.dateFormat, saleItem.Date)
+            partyName.text = saleItem.Party_Name
+            invoiceAmount.text = "₹ ${saleItem.Total_Invoice_Amount}"
             deleteSaleItem.setOnClickListener {
-                listener.onAction(adapterPosition, Actions.Delete, saleItem.invoiceId.toString())
+                listener.onAction(adapterPosition, Actions.Delete, saleItem.Invoice_Id.toString())
             }
             itemView.setOnClickListener {
                 listener.onAction(adapterPosition, Actions.Edit, saleItem)
@@ -65,13 +65,13 @@ class SalesListAdapter(
     fun filter(query: String?) {
         salesList = if (query?.length!! > 0)
             rawItems.filter { saleItem ->
-                saleItem.invoiceNumber.contains(query)
-                        || Common.getFormattedDate(Constant.dateFormat, saleItem.date)
+                saleItem.Invoice_Number.contains(query)
+                        || Common.getFormattedDate(Constant.dateFormat, saleItem.Date)
                     .toLowerCase(Locale.getDefault())
                     .contains(query)
-                        || saleItem.gstNumber.toLowerCase(Locale.getDefault()).contains(query)
-                        || saleItem.partyName.toLowerCase(Locale.getDefault()).contains(query)
-                        || saleItem.totalInvoiceAmount.toString().contains(query)
+                        || saleItem.Gst_Number.toLowerCase(Locale.getDefault()).contains(query)
+                        || saleItem.Party_Name.toLowerCase(Locale.getDefault()).contains(query)
+                        || saleItem.Total_Invoice_Amount.toString().contains(query)
             }
         else rawItems
         notifyDataSetChanged()

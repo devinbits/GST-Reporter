@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/CardView.Light"
+    style="@style/Theme.MaterialComponents.DayNight"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="5dp"
@@ -17,6 +17,7 @@
 
         <TextView
             android:id="@+id/invoiceNumberLabel"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -26,10 +27,10 @@
 
         <TextView
             android:id="@+id/invoiceNumber"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/invoiceNumberLabel"
@@ -38,6 +39,7 @@
 
         <TextView
             android:id="@+id/dateLabel"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -48,10 +50,10 @@
 
         <TextView
             android:id="@+id/date"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/invoiceNumber"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/dateLabel"
@@ -74,6 +76,7 @@
 
         <TextView
             android:id="@+id/partyNameLabel"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -84,11 +87,10 @@
 
         <TextView
             android:id="@+id/partyName"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@color/black"
-
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/partyNameLabel"
@@ -97,6 +99,7 @@
 
         <TextView
             android:id="@+id/amountLabel"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -109,10 +112,10 @@
 
         <TextView
             android:id="@+id/invoiceAmount"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/amountLabel"
@@ -121,6 +124,7 @@
 
         <ImageButton
             android:id="@+id/deleteButton"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@null"

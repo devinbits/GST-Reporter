@@ -9,8 +9,6 @@ import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.model.Profile
-import com.testtube.gstreporter.utils.Prefs
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
         navController = findNavController(R.id.nav_host_fragment)
@@ -80,11 +78,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> {
-                Prefs.clearPrefs(applicationContext)
-                FirebaseAuth.getInstance().signOut()
-                return true
-            }
+//            R.id.action_settings -> {
+//                Prefs.clearPrefs(applicationContext)
+//                FirebaseAuth.getInstance().signOut()
+//                return true
+//            }
             R.id.action_profile -> {
                 navController.navigate(R.id.action_FirstFragment_to_profile)
                 return true

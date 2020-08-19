@@ -13,11 +13,11 @@ class Profile(
     var avatar: String = ""
 ) {
 
-    public fun getProfile(context: Context): Task<DocumentSnapshot> {
+    fun getProfile(context: Context): Task<DocumentSnapshot> {
         return ProfileAdapter(context).getProfile()
     }
 
-    public fun saveProfile(context: Context) {
+    fun saveProfile(context: Context) {
         ProfileAdapter(context).saveProfile(this)
     }
 

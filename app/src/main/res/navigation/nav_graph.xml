@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_profile"
             app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_FirstFragment_to_dateFilterView"
+            app:destination="@id/dateFilterView" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -92,4 +95,8 @@
             android:id="@+id/action_profile_to_imageViewerFrag"
             app:destination="@id/imageViewerFrag" />
     </fragment>
+    <dialog
+        android:id="@+id/dateFilterView"
+        android:name="com.testtube.gstreporter.views.frag.DateFilterView"
+        android:label="DateFilterView" />
 </navigation>

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,6 +18,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
+import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
@@ -57,8 +59,8 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
     }
 
     private fun initViews(view: View) {
-        view.invoiceNumber.setText(saleItem.invoiceNumber)
-        view.date.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.date))
+        view.invoiceNumber.setText(saleItem.Invoice_Number)
+        view.date.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
         view.date.setOnClickListener(View.OnClickListener { v ->
             openDateSelector();
         })
@@ -66,14 +68,14 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             this.view?.let { v -> validate(v) }
         }
 
-        view.gstNumber.setText(saleItem.gstNumber)
-        view.partyName.setText(saleItem.partyName)
-        view.taxableAmount.setText(saleItem.taxableAmount.toString())
+        view.gstNumber.setText(saleItem.Gst_Number)
+        view.partyName.setText(saleItem.Party_Name)
+        view.taxableAmount.setText(saleItem.Taxable_Amount.toString())
         view.sGST.setText(saleItem.sGST.toString())
         view.cGST.setText(saleItem.cGST.toString())
         view.iGST.setText(saleItem.iGST.toString())
-        view.tGST.setText(saleItem.tGST.toString())
-        view.totalInvoiceAmount.setText(saleItem.totalInvoiceAmount.toString())
+        view.tGST.setText(saleItem.GST.toString())
+        view.totalInvoiceAmount.setText(saleItem.Total_Invoice_Amount.toString())
         view.includeImageCheckBox.setOnClickListener {
             if (!view.includeImageCheckBox.isChecked) {
                 view.rv_container.visibility = View.GONE
@@ -88,6 +90,23 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             view.recyclerView.adapter = imageRecyclerViewAdapter
         }
 
+        gstNumber.addTextChangedListener { text ->
+            val gst = text?.toString()
+            context?.let { c ->
+                Profile().getProfile(c).addOnCompleteListener {
+                    when {
+                        it.isSuccessful -> {
+                            val gstNumber = it.result?.toObject(Profile::class.java)?.gstNumber
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onAction(pos: Int, actionId: RecyclerViewInterface.Actions, data: Any) {
+        TODO("Not yet implemented")
     }
 
     private fun openDateSelector() {
@@ -101,12 +120,13 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
                 it,
                 DatePickerDialog.OnDateSetListener { view, nyear, monthOfYear, dayOfMonth ->
                     val cal = Calendar.getInstance()
-                    cal.set(nyear, monthOfYear, dayOfMonth)
-                    saleItem.date = cal.time
+                    cal.set(nyear, monthOfYear, dayOfMonth, 0, 0, 0)
+                    saleItem.Date = cal.time
+                    saleItem.sDate = Common.getSDate(cal.time)
                     rootView.date.setText(
                         Common.getFormattedDate(
                             Constant.dateFormat,
-                            saleItem.date
+                            saleItem.Date
                         )
                     )
                 },
@@ -169,18 +189,19 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             }
             else -> {
                 saleItem = SaleItem(
-                    saleItem.invoiceId,
+                    saleItem.Invoice_Id,
                     invoiceNumber,
                     gstNumber,
                     partyName,
                     taxableAmount.toDouble(),
                     date,
+                    saleItem.sDate,
                     sGST.toDouble(),
                     cGST.toDouble(),
                     iGST.toDouble(),
                     tGST.toDouble(),
-                    totalInvoiceAmount.toDouble(),
-                    imagePathList.map { it -> it.split("/").last() }
+                    totalInvoiceAmount.toDouble()
+//                    imagePathList.map { it -> it.split("/").last() }
                 )
                 context?.let { context ->
                     ItemCollectionAdapter(context).saveItem(saleItem)
@@ -199,10 +220,6 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
         }
-    }
-
-    override fun onAction(pos: Int, actionId: RecyclerViewInterface.Actions, data: Any) {
-        TODO("Not yet implemented")
     }
 
     override fun onClick(pos: Int) {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DateFilterWidget">
+        <attr name="showDate" format="boolean" />
+        <attr name="titleTextValue" format="string" />
+        <attr name="titleTextColorValue" format="color" />
+<!--        <attr name="titleTextSizeInDpValue" format="dimension" />-->
+    </declare-styleable>
+
+    <declare-styleable name="SegmentedControlWidget">
+        <attr name="FirstTabText" format="string" />
+        <attr name="SecondTabText" format="string" />
+    </declare-styleable>
+</resources>

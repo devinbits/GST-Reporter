@@ -3,21 +3,28 @@ package com.testtube.gstreporter.model
 import java.io.Serializable
 import java.util.*
 
-class SaleItem(
-    val invoiceId: Long = System.currentTimeMillis(),
-    var invoiceNumber: String = "IN-${invoiceId}",
-    var gstNumber: String = "",
-    var partyName: String = "",
-    var taxableAmount: Double = 0.0,
-    var date: Date = Date(),
+data class SaleItem(
+    val Invoice_Id: Long = System.currentTimeMillis(),
+    var Invoice_Number: String = "IN-${Invoice_Id}",
+    var Gst_Number: String = "",
+    var Party_Name: String = "",
+    var Taxable_Amount: Double = 0.0,
+    var Date: Date = getDate(),
+    var sDate: Int = com.testtube.gstreporter.utils.Common.getSDate(getDate()),
     var sGST: Double = 0.0,
     var cGST: Double = 0.0,
     var iGST: Double = 0.0,
-    var tGST: Double = sGST + cGST + iGST,
-    var totalInvoiceAmount: Double = 0.0,
-    var images: List<String>? = null
+    var GST: Double = sGST + cGST + iGST,
+    var Total_Invoice_Amount: Double = 0.0
+//    var images: List<String>? = null
 ) : Serializable {
+    var Invoice_Created_Date: Date = Date()
+}
 
-    var invoiceCreatedDate: Date = Date()
-
+fun getDate(): Date {
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    return cal.time
 }

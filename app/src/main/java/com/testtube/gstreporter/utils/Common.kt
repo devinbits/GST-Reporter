@@ -3,17 +3,19 @@ package com.testtube.gstreporter.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.*
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Environment
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.testtube.gstreporter.BuildConfig
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -36,7 +38,7 @@ class Common {
         }
 
         @SuppressLint("SimpleDateFormat")
-        public fun getFormattedDate(format: String, mDate: Date): String {
+        public fun getFormattedDate(format: String, mDate: Date = Date()): String {
             val simpleDateFormat = SimpleDateFormat(format)
             return simpleDateFormat.format(mDate)
         }
@@ -70,29 +72,28 @@ class Common {
 
         fun startPictureCaptureIntent(
             appCompatActivity: AppCompatActivity,
-            mrequestId: Int,
+            mRequestId: Int,
             filename: String
         ): String? {
-            var requestId = mrequestId
+            var requestId = mRequestId
             if (requestId == 0) requestId = Constants.REQUEST_IMAGE_CAPTURE
             var photoFile: File? = null
             var fileAbsPath: String? = null
             try {
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 if (takePictureIntent.resolveActivity(appCompatActivity.packageManager) != null) {
-                    // Create the File where the photo should go
-                    // Continue only if the File was successfully created
-                    photoFile = createImageFile(appCompatActivity)
-                    if (photoFile != null) {
-                        val photoURI: Uri = FileProvider.getUriForFile(
-                            appCompatActivity,
-                            appCompatActivity.packageName + ".fileprovider",
-                            photoFile
-                        )
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        appCompatActivity.startActivityForResult(takePictureIntent, requestId)
-                        fileAbsPath = photoFile.getAbsolutePath()
-                    }
+                    photoFile = createFile(
+                        appCompatActivity, Constants.Ext.JPG,
+                        Constants.DirType.Image
+                    )
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        appCompatActivity,
+                        "${appCompatActivity.packageName}.fileprovider",
+                        photoFile
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    appCompatActivity.startActivityForResult(takePictureIntent, requestId)
+                    fileAbsPath = photoFile.absolutePath
                 }
             } catch (ee: IOException) {
                 showToast(appCompatActivity, com.testtube.gstreporter.R.string.image_capture_error)
@@ -102,9 +103,9 @@ class Common {
 
         fun startPictureCaptureIntentFragment(
             frag: Fragment,
-            mrequestId: Int
+            mRequestId: Int
         ): String? {
-            var requestId = mrequestId
+            var requestId = mRequestId
             if (requestId == 0) requestId = Constants.REQUEST_IMAGE_CAPTURE_FRAG
             var photoFile: File? = null
             var fileAbsPath: String? = null
@@ -115,17 +116,17 @@ class Common {
                     if (takePictureIntent.resolveActivity(context.packageManager) != null) {
                         // Create the File where the photo should go
                         // Continue only if the File was successfully created
-                        photoFile = createImageFile(context)
-                        if (photoFile != null) {
-                            val photoURI: Uri = FileProvider.getUriForFile(
-                                context,
-                                frag.requireContext().packageName + ".fileprovider",
-                                photoFile
-                            )
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                            frag.startActivityForResult(takePictureIntent, requestId)
-                            fileAbsPath = photoFile.getAbsolutePath()
-                        }
+                        photoFile = createFile(
+                            context, Constants.Ext.JPG, Constants.DirType.Image
+                        )
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            context,
+                            "${frag.requireContext().packageName}.fileprovider",
+                            photoFile
+                        )
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        frag.startActivityForResult(takePictureIntent, requestId)
+                        fileAbsPath = photoFile.absolutePath
                     }
                 }
             } catch (ee: IOException) {
@@ -136,16 +137,18 @@ class Common {
 
 
         @Throws(IOException::class)
-        fun createImageFile(
+        fun createFile(
             mContext: Context,
-            filename: String = "JPEG_" + System.currentTimeMillis()
-        ): File? {
+            ext: String,
+            dirType: String = Constants.DirType.Doc,
+            filename: String = "GST_" + System.currentTimeMillis()
+        ): File {
             // Create an image file name
             val storageDir =
-                mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                mContext.getExternalFilesDir(dirType)
             return File.createTempFile(
                 filename,  /* prefix */
-                ".jpg",  /* suffix */
+                ext,  /* suffix */
                 storageDir /* directory */
             )
         }
@@ -159,13 +162,13 @@ class Common {
             val canvas = Canvas(output)
             val paint = Paint()
             val rect = Rect(0, 0, bitmap.width, bitmap.height)
-            paint.setAntiAlias(true)
+            paint.isAntiAlias = true
             canvas.drawARGB(0, 0, 0, 0)
             canvas.drawCircle(
                 (bitmap.width / 2).toFloat(), (bitmap.height / 2).toFloat(),
                 (Math.min(bitmap.width, bitmap.height) / 2).toFloat(), paint
             )
-            paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
             canvas.drawBitmap(bitmap, rect, rect, paint)
             return output
         }
@@ -175,9 +178,41 @@ class Common {
             return FirebaseAuth.getInstance().currentUser?.email
         }
 
-    }
+        fun getPixel(r: Resources, dip: Float): Float {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.displayMetrics
+            )
+        }
 
-//    init {
-//        instance = this
-//    }
+        fun sendEmail(context: Context, file: File) {
+            try {
+                val uri = FileProvider.getUriForFile(
+                    context, BuildConfig.APPLICATION_ID + ".fileprovider",
+                    file
+                )
+//            val email = "adityanabhinav@outlook.com"
+                val subject = "GST Report"
+                val emailIntent = Intent(Intent.ACTION_SEND)
+//            emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(email))
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+                emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                emailIntent.type = "message/*"
+                context.startActivity(Intent.createChooser(emailIntent, "Sending email..."))
+            } catch (t: Throwable) {
+                showToast(context, "Request failed try again: $t")
+            }
+        }
+
+        @JvmStatic
+        fun getMonth(start: Date): Int {
+            return getFormattedDate("M", start).toInt()
+        }
+
+        fun getSDate(start: Date): Int {
+            return getFormattedDate("Mdd", start).toInt()
+        }
+    }
 }
