@@ -28,6 +28,9 @@ class DocumentExportService<T : Any> {
         dataList: List<T>,
         exclusions: List<String> = Collections.emptyList()
     ): Deferred<File?>? {
+        if (dataList.isEmpty()) {
+            return null
+        }
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -65,7 +68,7 @@ class DocumentExportService<T : Any> {
                 }
 
                 try {
-                    val fileName = "${Common.getUser()}_${Common.getFormattedDate("dd_MMM_yyyy")}"
+                    val fileName = "${Common.getUser()}_${Common.getFormattedDate("dd_MMM_yy")}"
                     val file =
                         Common.createFile(
                             context,

@@ -24,7 +24,7 @@
         <item name="boxBackgroundColor">?attr/colorSurface</item>
     </style>
 
-    <style name="ButtonSolid" parent="Widget.MaterialComponents.Button">
+    <style name="ButtonSolid" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="backgroundColor">?attr/colorSurface</item>
         <item name="android:minHeight">0dp</item>
         <item name="android:minWidth">0dp</item>

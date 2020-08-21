@@ -3,9 +3,9 @@ package com.testtube.gstreporter.model
 import java.io.Serializable
 import java.util.*
 
-data class SaleItem(
-    val Invoice_Id: Long = System.currentTimeMillis(),
-    var Invoice_Number: String = "IN-${Invoice_Id}",
+class SaleItem(
+    val InvoiceId: Long = System.currentTimeMillis(),
+    var Invoice_Number: String = "IN-${InvoiceId}",
     var Gst_Number: String = "",
     var Party_Name: String = "",
     var Taxable_Amount: Double = 0.0,

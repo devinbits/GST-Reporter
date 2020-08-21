@@ -20,7 +20,7 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
     private val saleCollection: String = "${root}/sales"
 
     fun saveItem(saleItem: SaleItem) {
-        db.collection(saleCollection).document(saleItem.Invoice_Id.toString()).set(saleItem)
+        db.collection(saleCollection).document(saleItem.InvoiceId.toString()).set(saleItem)
             .addOnSuccessListener { void ->
                 Common.showToast(
                     context,
@@ -32,22 +32,22 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
     fun getAllDocuments(): Task<QuerySnapshot> = db.collection(saleCollection).get()
 
     fun getRecentDocuments(count: Long = 100): Task<QuerySnapshot> =
-        getDocumentsOrderedBy(count, "date")
+        db.collection(saleCollection).limit(count).get()
 
-    fun getDocumentsOrderedBy(count: Long = 10, orderBy: String): Task<QuerySnapshot> =
+    fun getDocumentsOrderedBy(count: Long = 100, orderBy: String): Task<QuerySnapshot> =
         db.collection(saleCollection).orderBy(orderBy, Query.Direction.DESCENDING).limit(count)
             .get()
 
-    fun getDocuments(count: Long = 10, date: Date): Task<QuerySnapshot> =
+    fun getDocuments(count: Long = 100, date: Date): Task<QuerySnapshot> =
         db.collection(saleCollection).whereEqualTo("sdate", Common.getSDate(date)).get()
 
 
-    fun getDocuments(count: Long = 10, start: Date, end: Date): Task<QuerySnapshot> =
+    fun getDocuments(count: Long = 100, start: Date, end: Date): Task<QuerySnapshot> =
         db.collection(saleCollection).whereGreaterThanOrEqualTo("sdate", Common.getSDate(start))
             .whereLessThanOrEqualTo("sdate", Common.getSDate(end)).get()
 
     fun deleteSaleItem(id: String) {
-        db.collection(saleCollection).document(id).delete();
+        db.collection(saleCollection).document(id).delete().addOnFailureListener(this)
         val storage = Firebase.storage
         val storageRef = storage.reference
         val ref = storageRef.child("${Common.getUser()}/IN-${id}")
@@ -58,16 +58,12 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
                         it.items.forEach { item ->
                             item.delete()
                         }
-
                     }
                 }
 
                 listResult.items.forEach { item ->
                     item.delete()
                 }
-            }
-            .addOnFailureListener {
-                // Uh-oh, an error occurred!
             }
     }
 
@@ -81,7 +77,7 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
         filterType: Enum<Constants.FilterType>
     ): Task<QuerySnapshot> {
         return if (filterType == Constants.FilterType.Month) {
-            var endDate = Date(start.time)
+            val endDate = Date(start.time)
             endDate.month = start.month + 1
             getDocuments(count, start, endDate)
         } else getDocuments(count, start)

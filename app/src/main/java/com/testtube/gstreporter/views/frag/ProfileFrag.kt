@@ -29,11 +29,7 @@ import kotlinx.android.synthetic.main.fragment_profile.view.*
 
 class ProfileFrag : Fragment() {
 
-    var avatarImageTempPath: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var avatarImageTempPath: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,8 +44,11 @@ class ProfileFrag : Fragment() {
         initViews(view)
         context?.let {
             ProfileAdapter(it).getProfile().addOnSuccessListener {
-                val profile = it?.toObject(Profile::class.java)
-                setProfile(profile!!)
+                val profile = it?.toObject(Profile::class.java) ?: null
+                if (profile != null) {
+                    setProfile(profile)
+                }else
+                    progress_circular.visibility = View.GONE
             }
         }
     }

@@ -22,9 +22,11 @@ import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
+import com.testtube.gstreporter.utils.Constants
 import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import com.testtube.gstreporter.workers.FirebaseStorageFileUpload
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.util.*
@@ -34,10 +36,12 @@ import java.util.*
  */
 class SecondFragment : Fragment(), RecyclerViewInterface {
 
+    private var isSameState: Boolean = false
     private var fileAbsPath: String? = "";
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
     private lateinit var imageRecyclerViewAdapter: ImageRecyclerViewAdapter
+    private lateinit var profile: Profile
 
     val args: SecondFragmentArgs by navArgs()
 
@@ -59,6 +63,12 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
     }
 
     private fun initViews(view: View) {
+        context?.let {
+            Profile().getProfile(it).addOnSuccessListener {
+                profile = it?.toObject(Profile::class.java) ?: Profile()
+            }
+        }
+
         view.invoiceNumber.setText(saleItem.Invoice_Number)
         view.date.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
         view.date.setOnClickListener(View.OnClickListener { v ->
@@ -83,6 +93,25 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
                 view.rv_container.visibility = View.VISIBLE
             }
         }
+
+        tGST.addTextChangedListener { text ->
+            val len = text?.length ?: 0
+            if (len != 15) {
+                tGST.error = "Invalid GST Number"
+                return@addTextChangedListener
+            }
+            val states = Constants.States.values()
+            if (len in 1..2) {
+                when (val code = text.toString().toIntOrNull()) {
+                    null -> input_state.setText(states[0].name)
+                    else -> {
+                        if (code in 1..states.size)
+                            isSameState = states[code].name.replace("_", " ") == profile.state
+                    }
+                }
+            }
+        }
+
         context?.let { context ->
             view.recyclerView.layoutManager =
                 LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
@@ -189,7 +218,7 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             }
             else -> {
                 saleItem = SaleItem(
-                    saleItem.Invoice_Id,
+                    saleItem.InvoiceId,
                     invoiceNumber,
                     gstNumber,
                     partyName,

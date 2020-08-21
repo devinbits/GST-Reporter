@@ -39,7 +39,11 @@ class SalesListAdapter(
             partyName.text = saleItem.Party_Name
             invoiceAmount.text = "₹ ${saleItem.Total_Invoice_Amount}"
             deleteSaleItem.setOnClickListener {
-                listener.onAction(adapterPosition, Actions.Delete, saleItem.Invoice_Id.toString())
+                listener.onAction(
+                    adapterPosition,
+                    Actions.Delete,
+                    saleItem.Invoice_Number.split("-")[1]
+                )
             }
             itemView.setOnClickListener {
                 listener.onAction(adapterPosition, Actions.Edit, saleItem)

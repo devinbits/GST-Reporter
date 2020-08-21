@@ -65,7 +65,10 @@
             app:uri="auth" />
         <action
             android:id="@+id/action_AuthFrag_to_profile"
-            app:destination="@id/profile" />
+            app:destination="@id/profile"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/AuthFrag"
+            app:popUpToInclusive="true" />
     </fragment>
     <dialog
         android:id="@+id/imageViewerFrag"

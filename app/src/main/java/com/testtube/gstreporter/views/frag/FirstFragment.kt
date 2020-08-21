@@ -73,11 +73,11 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
                         exclude
                     )?.await()
                     withContext(Dispatchers.Main) {
+                        hideProgress()
                         if (sheet != null) {
                             Common.sendEmail(it1, sheet)
                         } else
                             Common.showToast(it1, "Error occurred in exporting data!")
-                        hideProgress()
                     }
                 }
             }
@@ -107,7 +107,6 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
                     view?.searchView?.visibility = View.INVISIBLE
                 else {
                     view?.searchView?.visibility = View.VISIBLE
-                    view?.searchView?.setOnQueryTextListener(this)
                     view?.searchView?.setOnQueryTextListener(this)
                 }
                 view?.progress_circular?.visibility = View.GONE
@@ -208,11 +207,12 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
 
     private fun showProgress(text: String = "loading") {
         progressDialog.setMessage(text)
+        progressDialog.setCancelable(false)
         if (!progressDialog.isShowing) progressDialog.show()
     }
 
     private fun hideProgress() {
-        if (progressDialog.isShowing) progressDialog.hide()
+        progressDialog.hide()
     }
 
 }

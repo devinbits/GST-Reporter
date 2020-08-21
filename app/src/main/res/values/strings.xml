@@ -38,6 +38,7 @@
     <string name="select_date">Select Date</string>
     <string name="ok">OK</string>
     <string name="export">Export</string>
+    <string name="export_xlx">Export Excel Sheet</string>
     <string name="export_all_data">Yes, Delete Data</string>
 
     <string-array name="months">

@@ -1,10 +1,12 @@
 package com.testtube.gstreporter.views.activity
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.testtube.gstreporter.R
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         navController = findNavController(R.id.nav_host_fragment)
         navController.addOnDestinationChangedListener(NavController.OnDestinationChangedListener
-        { controller, destination, arguments ->
+        { _, destination, _ ->
             supportActionBar?.show()
             when (destination.id) {
                 R.id.SecondFragment -> supportActionBar?.setTitle(
@@ -31,7 +33,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.AuthFrag -> {
                     supportActionBar?.hide()
                 }
-                else -> supportActionBar?.setTitle(getString(R.string.app_name))
+                else -> {
+                    supportActionBar?.setTitle(getString(R.string.app_name))
+                }
             }
         })
 
@@ -46,16 +50,24 @@ class MainActivity : AppCompatActivity() {
                             it.isSuccessful -> {
                                 val profile = it.result?.toObject(Profile::class.java)
                                 when (profile) {
-                                    null -> navController.navigate(R.id.action_AuthFrag_to_profile)
+                                    null -> when (navController.currentDestination?.id) {
+                                        R.id.FirstFragment ->
+                                            navController.navigate(
+                                            R.id.action_FirstFragment_to_profile,null,NavOptions.Builder().setPopUpTo(R.id.FirstFragment,true).build()
+                                        )
+                                        R.id.AuthFrag -> Handler().postDelayed({
+                                            navController.navigate(
+                                                R.id.action_AuthFrag_to_profile
+                                            )
+                                        }, 2000)
+
+                                    }
                                     else -> when {
                                         navController.currentDestination?.id != R.id.FirstFragment -> navController.navigate(
                                             R.id.action_authFrag_to_FirstFragment
                                         )
                                     }
                                 }
-                            }
-                            else -> {
-                                navController.navigate(R.id.action_AuthFrag_to_profile)
                             }
                         }
                     }
