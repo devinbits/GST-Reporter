@@ -14,5 +14,14 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Gradle
-      run: ./gradlew build
+#     - name: Build with Gradle
+#       run: ./gradlew build
+    - name: Decrypt large secret
+      run: 'gpg --quiet --batch --yes --decrypt --passphrase="aditya@work201" --output app/google-services.json google-services.json.gpg'
+      env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+      # This command is just an example to show your secret being printed
+      # Ensure you remove any print statements of your secrets. GitHub does
+      # not hide secrets that use this workaround.
+    - name: Test printing your secret (Remove this step in production)
+      run: cat app/google-services.json
