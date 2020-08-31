@@ -84,7 +84,8 @@ class Common {
                 if (takePictureIntent.resolveActivity(appCompatActivity.packageManager) != null) {
                     photoFile = createFile(
                         appCompatActivity, Constants.Ext.JPG,
-                        Constants.DirType.Image
+                        Constants.DirType.Image,
+                        "GST_${System.currentTimeMillis()}"
                     )
                     val photoURI: Uri = FileProvider.getUriForFile(
                         appCompatActivity,
@@ -117,7 +118,10 @@ class Common {
                         // Create the File where the photo should go
                         // Continue only if the File was successfully created
                         photoFile = createFile(
-                            context, Constants.Ext.JPG, Constants.DirType.Image
+                            context,
+                            Constants.Ext.JPG,
+                            Constants.DirType.Image,
+                            "GST_${System.currentTimeMillis()}"
                         )
                         val photoURI: Uri = FileProvider.getUriForFile(
                             context,
@@ -141,7 +145,7 @@ class Common {
             mContext: Context,
             ext: String,
             dirType: String = Constants.DirType.Doc,
-            filename: String = "GST_" + System.currentTimeMillis()
+            filename: String
         ): File {
             // Create an image file name
             val storageDir =

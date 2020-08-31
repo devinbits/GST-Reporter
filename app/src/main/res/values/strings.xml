@@ -39,7 +39,10 @@
     <string name="ok">OK</string>
     <string name="export">Export</string>
     <string name="export_xlx">Export Excel Sheet</string>
-    <string name="export_all_data">Yes, Delete Data</string>
+    <string name="export_all_data">Delete Exported Records</string>
+    <string name="view">View</string>
+    <string name="share">Share</string>
+    <string name="tax_18">18</string>
 
     <string-array name="months">
         <item>January</item>

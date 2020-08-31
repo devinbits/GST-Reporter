@@ -23,9 +23,12 @@
         <action
             android:id="@+id/action_FirstFragment_to_profile"
             app:destination="@id/profile" />
+<!--        <action-->
+<!--            android:id="@+id/action_FirstFragment_to_dateFilterView"-->
+<!--            app:destination="@id/dateFilterView" />-->
         <action
-            android:id="@+id/action_FirstFragment_to_dateFilterView"
-            app:destination="@id/dateFilterView" />
+            android:id="@+id/action_FirstFragment_to_progressDialog"
+            app:destination="@id/progressDialog" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -97,9 +100,19 @@
         <action
             android:id="@+id/action_profile_to_imageViewerFrag"
             app:destination="@id/imageViewerFrag" />
+        <action
+            android:id="@+id/action_profile_to_AuthFrag"
+            app:destination="@id/AuthFrag"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
+<!--    <dialog-->
+<!--        android:id="@+id/dateFilterView"-->
+<!--        android:name="com.testtube.gstreporter.views.frag.DateFilterView"-->
+<!--        android:label="DateFilterView" />-->
     <dialog
-        android:id="@+id/dateFilterView"
-        android:name="com.testtube.gstreporter.views.frag.DateFilterView"
-        android:label="DateFilterView" />
+        android:id="@+id/progressDialog"
+        android:name="com.testtube.gstreporter.views.frag.ProgressDialog"
+        android:label="ProgressDialog" />
 </navigation>

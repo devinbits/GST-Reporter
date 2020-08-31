@@ -41,7 +41,6 @@
                     android:src="@drawable/ic_baseline_photo_camera_24" />
             </FrameLayout>
 
-
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/TextInputStyle"
                 android:layout_width="match_parent"
@@ -50,6 +49,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:hint="@string/name"
+                app:helperText="Required"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -69,6 +69,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:hint="@string/firm_name"
+                app:helperText="Required"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -81,6 +82,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/gst_input_layout"
                 style="@style/TextInputStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,6 +90,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:hint="@string/input_gst_number"
+                app:counterEnabled="true"
+                app:counterMaxLength="15"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -95,7 +99,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_gst_number"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:maxLength="15" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -126,23 +131,21 @@
 
             <Button
                 android:id="@+id/save"
-                style="@style/ButtonSolid"
+                style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="8dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
                 android:text="@string/save"
-                app:cornerRadius="4dp" />
+                app:backgroundTint="@color/colorAccent" />
 
         </LinearLayout>
 
     </ScrollView>
 
     <Button
-        android:id="@+id/button_sign_in"
+        android:id="@+id/logout"
         style="@style/ButtonOutline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -151,6 +154,6 @@
         android:layout_marginBottom="8dp"
         android:drawableEnd="@drawable/ic_baseline_exit_to_app_24"
         android:drawableTint="@color/colorPrimary"
-        android:text="Logout" />
+        android:text="@string/action_logout" />
 
 </LinearLayout>

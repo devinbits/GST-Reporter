@@ -37,8 +37,8 @@ class DateFilterView : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.tabs.setOnCheckedChangeListener { _, _ ->
-            date_start.setShowText(date.isChecked)
-            date_end.setShowText(date.isChecked)
+            date_start.setShowText(date_text.isChecked)
+            date_end.setShowText(date_text.isChecked)
         }
         view.date_range.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {

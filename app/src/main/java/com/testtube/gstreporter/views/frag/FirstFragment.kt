@@ -1,6 +1,5 @@
 package com.testtube.gstreporter.views.frag
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -38,7 +37,6 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
     private var saleList: MutableList<SaleItem> = ArrayList()
     private lateinit var saleListAdapter: SalesListAdapter
     private lateinit var itemCollectionAdapter: ItemCollectionAdapter
-    private lateinit var progressDialog: ProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +48,6 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        progressDialog = ProgressDialog(context)
         view.fab_new_form.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
@@ -60,8 +57,8 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
             }
         }
 
-        view.export.setOnClickListener {
-            showProgress("Generating file. Please Wait...")
+        view.share.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_progressDialog)
             context?.let { it1 ->
                 val exclude = ArrayList<String>()
                 exclude.add("Invoice_Id")
@@ -73,7 +70,7 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
                         exclude
                     )?.await()
                     withContext(Dispatchers.Main) {
-                        hideProgress()
+                        findNavController().navigateUp()
                         if (sheet != null) {
                             Common.sendEmail(it1, sheet)
                         } else
@@ -203,16 +200,6 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
             view?.searchView?.setOnQueryTextListener(this)
         }
         view?.progress_circular?.visibility = View.GONE
-    }
-
-    private fun showProgress(text: String = "loading") {
-        progressDialog.setMessage(text)
-        progressDialog.setCancelable(false)
-        if (!progressDialog.isShowing) progressDialog.show()
-    }
-
-    private fun hideProgress() {
-        progressDialog.hide()
     }
 
 }

@@ -16,6 +16,7 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.testtube.gstreporter.R
@@ -43,11 +44,11 @@ class ProfileFrag : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews(view)
         context?.let {
-            ProfileAdapter(it).getProfile().addOnSuccessListener {
-                val profile = it?.toObject(Profile::class.java) ?: null
+            ProfileAdapter(it).getProfile().addOnSuccessListener { ds ->
+                val profile = ds?.toObject(Profile::class.java)
                 if (profile != null) {
                     setProfile(profile)
-                }else
+                } else
                     progress_circular.visibility = View.GONE
             }
         }
@@ -58,15 +59,17 @@ class ProfileFrag : Fragment() {
         input_firm_name.setText(profile.firmName)
         input_gst_number.setText(profile.gstNumber)
         input_state.setText(profile.state)
+        if (profile.avatar.isNotBlank())
+            Firebase.storage.reference.child("${Common.getUser()}/avatar.jpg").downloadUrl.addOnSuccessListener {
+                Glide.with(this /* context */)
+                    .load(it)
+                    .centerCrop()
+                    .circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade(500))
+                    .into(avatar_image)
+            }
+        else progress_circular.visibility = View.GONE
 
-        Firebase.storage.reference.child("${Common.getUser()}/avatar.jpg").downloadUrl.addOnSuccessListener {
-            Glide.with(this /* context */)
-                .load(it)
-                .centerCrop()
-                .circleCrop()
-                .transition(DrawableTransitionOptions.withCrossFade(500))
-                .into(avatar_image)
-        }
     }
 
     private fun initViews(view: View) {
@@ -83,19 +86,29 @@ class ProfileFrag : Fragment() {
 
         (input_gst_number as TextInputEditText).addTextChangedListener { text: Editable? ->
             val len = text?.length ?: 0
+            if (len != 15) {
+                gst_input_layout.error = "Required"
+            } else
+                gst_input_layout.error = null
+            if (len <= 1)
+                return@addTextChangedListener
             val states = Constants.States.values()
-            if (len in 1..2) {
-                when (val code = text.toString().toIntOrNull()) {
-                    null -> input_state.setText(states[0].name)
+            val sCode = text?.substring(0, 2) ?: ""
+            if (sCode.isNotBlank()) {
+                when (val code = sCode.toIntOrNull()) {
+                    null -> input_state.setText("")
                     else -> {
                         if (code in 1..states.size)
                             input_state.setText(states[code].name.replace("_", " "))
                         else
-                            input_state.setText(states[0].name)
+                            input_state.setText("")
                     }
                 }
-            } else
-                input_state.setText(states[0].name)
+            }
+        }
+
+        logout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
         }
 
         view.avatar_image.setOnClickListener {
@@ -118,7 +131,7 @@ class ProfileFrag : Fragment() {
         } else if (firmName.isEmpty()) {
             input_firm_name.error = getString(R.string.required)
             return
-        } else if (gstNumber.isEmpty()) {
+        } else if (gstNumber.isEmpty() || gstNumber.length != 15) {
             input_gst_number.error = getString(R.string.required)
             return
         } else if (state.isEmpty()) {
@@ -128,7 +141,7 @@ class ProfileFrag : Fragment() {
 
         context?.let { it ->
             val profile =
-                Profile(name, firmName, gstNumber, state, "").saveProfile(it)
+                Profile(name, firmName, gstNumber, state, avatarImageTempPath ?: "").saveProfile(it)
             if (avatarImageTempPath != null) {
                 val data = Builder()
                     .putString("path", avatarImageTempPath)

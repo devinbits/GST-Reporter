@@ -4,7 +4,7 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
@@ -25,7 +25,6 @@
     </style>
 
     <style name="ButtonSolid" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
-        <item name="backgroundColor">?attr/colorSurface</item>
         <item name="android:minHeight">0dp</item>
         <item name="android:minWidth">0dp</item>
     </style>

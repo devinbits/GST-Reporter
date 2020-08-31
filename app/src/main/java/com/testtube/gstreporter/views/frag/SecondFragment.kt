@@ -4,29 +4,31 @@ import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.testtube.gstreporter.R
+import com.testtube.gstreporter.databinding.FragmentSecondBinding
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
 import com.testtube.gstreporter.utils.Constants
+import com.testtube.gstreporter.viewmodel.NewSaleVM
 import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
-import com.testtube.gstreporter.workers.FirebaseStorageFileUpload
-import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.fragment_second.view.*
 import java.util.*
@@ -34,14 +36,16 @@ import java.util.*
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class SecondFragment : Fragment(), RecyclerViewInterface {
+class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface {
 
-    private var isSameState: Boolean = false
+    private lateinit var viewModel: NewSaleVM
+    private var isSameState: MutableLiveData<Boolean> = MutableLiveData(false)
     private var fileAbsPath: String? = "";
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
     private lateinit var imageRecyclerViewAdapter: ImageRecyclerViewAdapter
     private lateinit var profile: Profile
+    private lateinit var binding: FragmentSecondBinding
 
     val args: SecondFragmentArgs by navArgs()
 
@@ -50,12 +54,22 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second, container, false)
+        viewModel = ViewModelProvider(this).get(NewSaleVM::class.java)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_second,
+            container,
+            false
+        )
+        binding.viewmodel = viewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         rootView = view;
+        context?.let {
+            viewModel.init(ItemCollectionAdapter(it), WorkManager.getInstance(it))
+        }
         if (args.sale != null) {
             saleItem = args.sale!!
         }
@@ -69,23 +83,23 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             }
         }
 
-        view.invoiceNumber.setText(saleItem.Invoice_Number)
-        view.date.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
-        view.date.setOnClickListener(View.OnClickListener { v ->
-            openDateSelector();
-        })
+        view.invoice_number.setText(saleItem.Invoice_Number)
+        view.date_text.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
+        view.date_text.setOnClickListener { _ ->
+            openDateSelector()
+        }
         view.save.setOnClickListener {
-            this.view?.let { v -> validate(v) }
+            validate()
         }
 
-        view.gstNumber.setText(saleItem.Gst_Number)
-        view.partyName.setText(saleItem.Party_Name)
-        view.taxableAmount.setText(saleItem.Taxable_Amount.toString())
-        view.sGST.setText(saleItem.sGST.toString())
-        view.cGST.setText(saleItem.cGST.toString())
-        view.iGST.setText(saleItem.iGST.toString())
-        view.tGST.setText(saleItem.GST.toString())
-        view.totalInvoiceAmount.setText(saleItem.Total_Invoice_Amount.toString())
+        view.gst_number.setText(saleItem.Gst_Number)
+        view.party_name.setText(saleItem.Party_Name)
+        view.taxable_amount.setText(saleItem.Taxable_Amount.toString())
+        view.s_GST.setText(saleItem.sGST.toString())
+        view.c_GST.setText(saleItem.cGST.toString())
+        view.i_GST.setText(saleItem.iGST.toString())
+        view.t_GST.setText(saleItem.GST.toString())
+        view.total_invoice_amount.setText(saleItem.Total_Invoice_Amount.toString())
         view.includeImageCheckBox.setOnClickListener {
             if (!view.includeImageCheckBox.isChecked) {
                 view.rv_container.visibility = View.GONE
@@ -94,22 +108,61 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             }
         }
 
-        tGST.addTextChangedListener { text ->
+        gst_number.addTextChangedListener { text ->
             val len = text?.length ?: 0
             if (len != 15) {
-                tGST.error = "Invalid GST Number"
+                gstNumber_layout.error = "Required"
+            } else
+                gstNumber_layout.error = null
+            if (len <= 1)
                 return@addTextChangedListener
-            }
             val states = Constants.States.values()
-            if (len in 1..2) {
-                when (val code = text.toString().toIntOrNull()) {
-                    null -> input_state.setText(states[0].name)
+            val sCode = text?.substring(0, 2) ?: ""
+            if (sCode.isNotBlank()) {
+                when (val code = sCode.toIntOrNull()) {
+                    null -> isSameState.value = false
                     else -> {
-                        if (code in 1..states.size)
-                            isSameState = states[code].name.replace("_", " ") == profile.state
+                        isSameState.value = if (code in 1..states.size)
+                            states[code].name.replace("_", " ") == profile.state
+                        else false
                     }
                 }
             }
+        }
+
+        t_GST.addTextChangedListener { text: Editable? ->
+            if (isSameState.value!!) {
+                val gst: Double = t_GST.text?.toString()?.toDoubleOrNull() ?: 0.0
+                c_GST.setText("${gst / 2}")
+                s_GST.setText("${gst / 2}")
+                calculateTotalAmount()
+            } else {
+                c_GST.setText("0")
+                s_GST.setText("0")
+            }
+        }
+
+        isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
+        {
+            if (it) {
+                val gst: Double = t_GST.text?.toString()?.toDoubleOrNull() ?: 0.0
+                c_GST.setText("${gst / 2}")
+                s_GST.setText("${gst / 2}")
+                i_GST.visibility = View.GONE
+                i_GST.setText("")
+                cGST_layout.visibility = View.VISIBLE
+                sGST_layout.visibility = View.VISIBLE
+            } else {
+                i_GST.visibility = View.VISIBLE
+                i_GST.setText(getString(R.string.tax_18))
+                t_GST.setText(getString(R.string.tax_18))
+                cGST_layout.visibility = View.GONE
+                sGST_layout.visibility = View.GONE
+            }
+        })
+
+        taxable_amount.addTextChangedListener { text: Editable? ->
+            calculateTotalAmount()
         }
 
         context?.let { context ->
@@ -118,20 +171,13 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
             imageRecyclerViewAdapter = ImageRecyclerViewAdapter(context, this)
             view.recyclerView.adapter = imageRecyclerViewAdapter
         }
+    }
 
-        gstNumber.addTextChangedListener { text ->
-            val gst = text?.toString()
-            context?.let { c ->
-                Profile().getProfile(c).addOnCompleteListener {
-                    when {
-                        it.isSuccessful -> {
-                            val gstNumber = it.result?.toObject(Profile::class.java)?.gstNumber
-
-                        }
-                    }
-                }
-            }
-        }
+    private fun calculateTotalAmount() {
+        val amount = taxable_amount?.text?.toString()?.toDoubleOrNull() ?: 0.0
+        val gst = t_GST?.text.toString().toDoubleOrNull() ?: 0.0
+        val totalAmount = ((amount * (gst * 0.01)) + amount).toBigDecimal()
+        total_invoice_amount.setText("$totalAmount")
     }
 
     override fun onAction(pos: Int, actionId: RecyclerViewInterface.Actions, data: Any) {
@@ -152,7 +198,7 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
                     cal.set(nyear, monthOfYear, dayOfMonth, 0, 0, 0)
                     saleItem.Date = cal.time
                     saleItem.sDate = Common.getSDate(cal.time)
-                    rootView.date.setText(
+                    rootView.date_text.setText(
                         Common.getFormattedDate(
                             Constant.dateFormat,
                             saleItem.Date
@@ -167,85 +213,35 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
         dpd?.show()
     }
 
-    private fun validate(view: View) {
-        val invoiceNumber = view.invoiceNumber.text.toString()
-        val gstNumber = view.gstNumber.text.toString()
-        val partyName = view.partyName.text.toString()
-        val taxableAmount = view.taxableAmount.text.toString()
-        val date = Date(view.date.text.toString())
-        val sGST = view.sGST.text.toString()
-        val cGST = view.cGST.text.toString()
-        val iGST = view.iGST.text.toString()
-        val tGST = view.tGST.text.toString()
-        val totalInvoiceAmount = view.totalInvoiceAmount.text.toString()
-        val imagePathList = imageRecyclerViewAdapter.getImagePathList()
+    private fun validate() {
+        saleItem.images = imageRecyclerViewAdapter.getImagePathList()
         when {
-            invoiceNumber.isBlank() -> {
-                view.invoiceNumber.error = getString(R.string.required)
+            viewModel.invoiceNumber.isBlank() -> {
+                invoice_number.error = getString(R.string.required)
                 return
             }
-            gstNumber.isBlank() -> {
-                view.gstNumber.error = getString(R.string.required)
+            viewModel.gstNumber.isBlank() -> {
+                gstNumber_layout.error = getString(R.string.required)
                 return
             }
-            partyName.isBlank() -> {
-                view.partyName.error = getString(R.string.required)
+            viewModel.partyName.isBlank() -> {
+                party_name.error = getString(R.string.required)
                 return
             }
-            taxableAmount.isBlank() -> {
-                view.taxableAmount.error = getString(R.string.required)
+            viewModel.taxableAmount.isBlank() -> {
+                taxable_amount.error = getString(R.string.required)
                 return
             }
-            sGST.isBlank() -> {
-                view.sGST.error = getString(R.string.required)
+            viewModel.tGST.isBlank() -> {
+                t_GST.error = getString(R.string.required)
                 return
             }
-            cGST.isBlank() -> {
-                view.cGST.error = getString(R.string.required)
-                return
-            }
-            iGST.isBlank() -> {
-                view.iGST.error = getString(R.string.required)
-                return
-            }
-            tGST.isBlank() -> {
-                view.tGST.error = getString(R.string.required)
-                return
-            }
-            totalInvoiceAmount.isBlank() -> {
-                view.totalInvoiceAmount.error = getString(R.string.required)
+            viewModel.totalInvoiceAmount.isBlank() -> {
+                total_invoice_amount.error = getString(R.string.required)
                 return
             }
             else -> {
-                saleItem = SaleItem(
-                    saleItem.InvoiceId,
-                    invoiceNumber,
-                    gstNumber,
-                    partyName,
-                    taxableAmount.toDouble(),
-                    date,
-                    saleItem.sDate,
-                    sGST.toDouble(),
-                    cGST.toDouble(),
-                    iGST.toDouble(),
-                    tGST.toDouble(),
-                    totalInvoiceAmount.toDouble()
-//                    imagePathList.map { it -> it.split("/").last() }
-                )
-                context?.let { context ->
-                    ItemCollectionAdapter(context).saveItem(saleItem)
-                    if (includeImageCheckBox.isChecked)
-                        for (path in imagePathList) {
-                            val data = Data.Builder()
-                                .putString("path", path)
-                                .putString("inv", invoiceNumber)
-                                .build();
-                            val req = OneTimeWorkRequestBuilder<FirebaseStorageFileUpload>()
-                                .setInputData(data)
-                                .build()
-                            WorkManager.getInstance(context).enqueue(req)
-                        }
-                }
+                viewModel.saveItem(saleItem)
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
         }
@@ -263,8 +259,10 @@ class SecondFragment : Fragment(), RecyclerViewInterface {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
-            val lastPosition = imageRecyclerViewAdapter.addImagePath(fileAbsPath!!)
-            recyclerView.scrollToPosition(lastPosition)
+            fileAbsPath?.let {
+                val pos = imageRecyclerViewAdapter.addImagePath(it)
+                recyclerView.smoothScrollToPosition(pos)
+            }
             fileAbsPath = null
         } else Common.showToast(context, R.string.image_capture_error)
     }

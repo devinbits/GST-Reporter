@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
@@ -45,9 +46,7 @@ class AuthFrag : Fragment() {
 
     private fun startAuth() {
         val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
-            AuthUI.IdpConfig.GoogleBuilder().build()
-        )
+            AuthUI.IdpConfig.GoogleBuilder().build())
 
         // Create and launch sign-in intent
         startActivityForResult(
@@ -58,16 +57,19 @@ class AuthFrag : Fragment() {
                 .build(),
             sResult
         )
+        Common.showToast(context,"Create account. Please Wait...")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == sResult) {
             val response = IdpResponse.fromResultIntent(data)
-
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 val user = FirebaseAuth.getInstance().currentUser
                 Common.showToast(context, " Welcome ${user?.displayName}")
+                findNavController().navigate(
+                    R.id.action_AuthFrag_to_profile
+                )
             } else {
                 Common.showToast(context, "Failed- ${response?.error?.errorCode}")
             }

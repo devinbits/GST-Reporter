@@ -1,5 +1,6 @@
 package com.testtube.gstreporter.model
 
+import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 import java.util.*
 
@@ -15,13 +16,13 @@ class SaleItem(
     var cGST: Double = 0.0,
     var iGST: Double = 0.0,
     var GST: Double = sGST + cGST + iGST,
-    var Total_Invoice_Amount: Double = 0.0
-//    var images: List<String>? = null
+    var Total_Invoice_Amount: Double = 0.0,
+    @Exclude
+    var images: List<String>? = null
 ) : Serializable {
-    var Invoice_Created_Date: Date = Date()
 }
 
-fun getDate(): Date {
+private fun getDate(): Date {
     val cal = Calendar.getInstance()
     cal.set(Calendar.HOUR_OF_DAY, 0)
     cal.set(Calendar.MINUTE, 0)

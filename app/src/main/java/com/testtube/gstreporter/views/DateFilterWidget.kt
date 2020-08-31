@@ -58,10 +58,10 @@ class DateFilterWidget @JvmOverloads constructor(
 
     private fun setView() {
         if (mShowDate) {
-            date.visibility = View.VISIBLE
+            date_text.visibility = View.VISIBLE
             divider.visibility = View.VISIBLE
         } else {
-            date.visibility = View.GONE
+            date_text.visibility = View.GONE
             divider.visibility = View.GONE
         }
     }
@@ -89,7 +89,7 @@ class DateFilterWidget @JvmOverloads constructor(
                 DatePickerDialog.OnDateSetListener { view, nyear, monthOfYear, dayOfMonth ->
                     val cal = Calendar.getInstance()
                     cal.set(nyear, monthOfYear, dayOfMonth,0,0,0)
-                    date.text = dayOfMonth.toString()
+                    date_text.text = dayOfMonth.toString()
                     this.month.text = DateFormatSymbols().months[(cal.time.month)]
                     sDate = cal.time
                 },

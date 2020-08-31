@@ -19,9 +19,9 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
     private val root: String = "users/${Common.getUser()}"
     private val saleCollection: String = "${root}/sales"
 
-    fun saveItem(saleItem: SaleItem) {
-        db.collection(saleCollection).document(saleItem.InvoiceId.toString()).set(saleItem)
-            .addOnSuccessListener { void ->
+    fun saveItem(saleItem: SaleItem): Task<Void> {
+       return db.collection(saleCollection).document(saleItem.InvoiceId.toString()).set(saleItem)
+            .addOnSuccessListener {
                 Common.showToast(
                     context,
                     "Saved ${saleItem.Invoice_Number}"

@@ -37,7 +37,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/export"
+        app:layout_constraintBottom_toTopOf="@+id/share"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
@@ -74,7 +74,7 @@
         app:srcCompat="@android:drawable/ic_input_add" />
 
     <Button
-        android:id="@+id/export"
+        android:id="@+id/share"
         style="@style/ButtonOutline"
         android:layout_width="match_parent"
         android:layout_height="60dp"

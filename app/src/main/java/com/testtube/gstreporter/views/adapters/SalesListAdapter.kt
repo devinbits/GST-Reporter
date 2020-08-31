@@ -19,13 +19,13 @@ class SalesListAdapter(
     private var salesList: List<SaleItem>, private var listener: RecyclerViewInterface
 ) : RecyclerView.Adapter<SalesListAdapter.MyViewHolder>() {
 
-    val rawItems: List<SaleItem> = salesList
+    private val rawItems: List<SaleItem> = salesList
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val invoiceNumber: TextView = itemView.invoiceNumber
-        private val date: TextView = itemView.date
-        private val partyName: TextView = itemView.partyName
+        private val invoiceNumber: TextView = itemView.invoice_number
+        private val date: TextView = itemView.date_text
+        private val partyName: TextView = itemView.party_name
         private val invoiceAmount: TextView = itemView.invoiceAmount
         private val deleteSaleItem: View = itemView.deleteButton
 
