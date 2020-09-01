@@ -28,5 +28,5 @@ jobs:
       with:
         appId: ${{secrets.FIREBASE_APP_ID}}
         token: ${{secrets.FIREBASE_TOKEN}}
-        groups: testers
+        groups: dev
         file: ./app/build/outputs/apk/prod/release/app-prod-release.apk
