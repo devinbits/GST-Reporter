@@ -121,7 +121,7 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
             Actions.Edit -> {
                 val saleItem: SaleItem = data as SaleItem
                 val actionFirstFragmentToSecondFragment =
-                    FirstFragmentDirections.actionFirstFragmentToSecondFragment(saleItem)
+                    SaleListFragDirections.actionFirstFragmentToSecondFragment(saleItem)
                 findNavController().navigate(actionFirstFragmentToSecondFragment);
             }
         }

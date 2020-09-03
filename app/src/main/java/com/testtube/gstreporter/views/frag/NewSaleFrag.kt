@@ -42,7 +42,7 @@ class NewSaleFrag : Fragment(R.layout.fragment_second), RecyclerViewInterface {
     private var profile: Profile = Profile()
     private lateinit var binding: FragmentSecondBinding
 
-    private val args: SecondFragmentArgs by navArgs()
+    private val args: NewSaleFragArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -231,7 +231,7 @@ class NewSaleFrag : Fragment(R.layout.fragment_second), RecyclerViewInterface {
 
     override fun onClick(pos: Int, data: Any) {
         val filePath: String = data as String
-        val action = SecondFragmentDirections.actionSecondFragmentToImageViewerFrag(filePath)
+        val action = NewSaleFragDirections.actionSecondFragmentToImageViewerFrag(filePath)
         findNavController().navigate(action);
     }
 
