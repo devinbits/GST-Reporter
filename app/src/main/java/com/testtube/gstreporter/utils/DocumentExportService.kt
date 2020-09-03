@@ -17,7 +17,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
@@ -26,7 +25,7 @@ class DocumentExportService<T : Any> {
     suspend fun createSheet(
         context: Context,
         dataList: List<T>,
-        exclusions: List<String> = Collections.emptyList()
+        customHeaders: Array<String>? = null
     ): Deferred<File?>? {
         if (dataList.isEmpty()) {
             return null
@@ -52,18 +51,21 @@ class DocumentExportService<T : Any> {
                 val header: Row = sheet.createRow(0)
 
                 val type = dataList[0]
-                val memberProperties =
-                    type::class.memberProperties.filter { getFilter(it, exclusions) }
-                memberProperties.forEachIndexed { index, member ->
+                val headers: Array<String> =
+                    customHeaders ?: type::class.memberProperties.map { it ->
+                        it.name
+                    }.toTypedArray()
+
+                headers.forEachIndexed { index, member ->
                     header.createCell(index)
-                        .setCellValue(member.name.replace("_", " ").capitalize())
+                        .setCellValue(member.replace("_", " ").capitalize())
                 }
 
                 dataList.forEachIndexed { index, data ->
                     val row: Row = sheet.createRow(index + 2)
-                    memberProperties.forEachIndexed { i, member ->
-                        val name = member.name
-                        row.createCell(i).setCellValue(readInstanceProperty(data, name))
+                    headers.forEachIndexed { i, member ->
+//                        val name = member.name
+                        row.createCell(i).setCellValue(readInstanceProperty(data, member))
                     }
                 }
 

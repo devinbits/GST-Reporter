@@ -24,7 +24,7 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
             .addOnSuccessListener {
                 Common.showToast(
                     context,
-                    "Saved ${saleItem.Invoice_Number}"
+                    "Saved ${saleItem.Bill}"
                 )
             }
     }

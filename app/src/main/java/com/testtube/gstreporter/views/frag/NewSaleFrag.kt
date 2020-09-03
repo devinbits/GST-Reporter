@@ -82,22 +82,22 @@ class NewSaleFrag : Fragment(R.layout.fragment_second), RecyclerViewInterface {
             validate()
         }
 
-        viewModel.invoiceNumber = saleItem.Invoice_Number
-        viewModel.gstNumber = saleItem.Gst_Number
+        viewModel.invoiceNumber = saleItem.Bill
+        viewModel.gstNumber = saleItem.Party_GSTN
         viewModel.partyName = saleItem.Party_Name
-        viewModel.taxableAmount = saleItem.Taxable_Amount.toString()
+        viewModel.taxableAmount = saleItem.Bill_Amount.toString()
         viewModel.sGST = saleItem.sGST.toString()
         viewModel.cGST = saleItem.cGST.toString()
         viewModel.iGST = saleItem.iGST.toString()
-        viewModel.tGST = saleItem.GST.toString()
-        viewModel.totalInvoiceAmount = saleItem.Total_Invoice_Amount.toString()
+        viewModel.tGST = saleItem.GST_Percentage.toString()
+        viewModel.totalInvoiceAmount = saleItem.Total_Invoice_Value.toString()
         viewModel.date = Common.getFormattedDate(Constant.dateFormat, saleItem.Date)
 
         view.includeImageCheckBox.setOnClickListener {
             viewModel.includeImageCheckBox = it.includeImageCheckBox.isChecked
         }
 
-        gst_number.addTextChangedListener { text ->
+        gst_number.addTextChangedListener { _ ->
             viewModel.checkIsSameState()
         }
 
@@ -106,35 +106,22 @@ class NewSaleFrag : Fragment(R.layout.fragment_second), RecyclerViewInterface {
                 calculateTotalAmount()
         }
 
-        t_GST.addTextChangedListener { text: Editable? ->
-            if (viewModel.isSameState.value == true) {
-                val gst: Double = t_GST.text?.toString()?.toDoubleOrNull() ?: 0.0
-                c_GST.setText("${gst / 2}")
-                s_GST.setText("${gst / 2}")
+        t_GST.addTextChangedListener { _: Editable? ->
                 calculateTotalAmount()
-            } else {
-                c_GST.setText("0")
-                s_GST.setText("0")
-            }
         }
 
         viewModel.isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
         {
             if (it) {
-                val gst: Double = t_GST.text?.toString()?.toDoubleOrNull() ?: 0.0
-                c_GST.setText("${gst / 2}")
-                s_GST.setText("${gst / 2}")
-                i_GST.visibility = View.GONE
-                i_GST.setText("")
                 cGST_layout.visibility = View.VISIBLE
                 sGST_layout.visibility = View.VISIBLE
+                iGST_layout.visibility = View.GONE
             } else {
-                i_GST.visibility = View.VISIBLE
-                i_GST.setText(getString(R.string.tax_18))
-                t_GST.setText(getString(R.string.tax_18))
+                iGST_layout.visibility = View.VISIBLE
                 cGST_layout.visibility = View.GONE
                 sGST_layout.visibility = View.GONE
             }
+            calculateTotalAmount()
         })
 
         taxable_amount.addTextChangedListener { text: Editable? ->
@@ -149,11 +136,23 @@ class NewSaleFrag : Fragment(R.layout.fragment_second), RecyclerViewInterface {
         }
     }
 
-    private fun calculateTotalAmount() {
+    private fun calculateTotalAmount(): Double {
         val amount = taxable_amount?.text?.toString()?.toDoubleOrNull() ?: 0.0
         val gst = t_GST?.text.toString().toDoubleOrNull() ?: 0.0
         val totalAmount = ((amount * (gst * 0.01)) + amount).toBigDecimal()
         total_invoice_amount.setText("$totalAmount")
+        if (viewModel.isSameState.value == true) {
+            c_GST.setText("${(amount * (gst * 0.01)) / 2}")
+            s_GST.setText("${(amount * (gst * 0.01)) / 2}")
+            i_GST.setText("0")
+        } else {
+            i_GST.setText("${amount * (gst * 0.01)}")
+            c_GST.setText("0")
+            s_GST.setText("0")
+        }
+        total_GST.setText("${amount * (gst * 0.01)}")
+
+        return amount
     }
 
     override fun onAction(pos: Int, actionId: RecyclerViewInterface.Actions, data: Any) {

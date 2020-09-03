@@ -34,15 +34,15 @@ class SalesListAdapter(
             saleItem: SaleItem,
             listener: RecyclerViewInterface
         ) {
-            invoiceNumber.text = saleItem.Invoice_Number
+            invoiceNumber.text = saleItem.Bill
             date.text = Common.getFormattedDate(Constant.dateFormat, saleItem.Date)
             partyName.text = saleItem.Party_Name
-            invoiceAmount.text = "₹ ${saleItem.Total_Invoice_Amount}"
+            invoiceAmount.text = "₹ ${saleItem.Total_Invoice_Value}"
             deleteSaleItem.setOnClickListener {
                 listener.onAction(
                     adapterPosition,
                     Actions.Delete,
-                    saleItem.Invoice_Number.split("-")[1]
+                    saleItem.Bill.split("-")[1]
                 )
             }
             itemView.setOnClickListener {
@@ -69,13 +69,13 @@ class SalesListAdapter(
     fun filter(query: String?) {
         salesList = if (query?.length!! > 0)
             rawItems.filter { saleItem ->
-                saleItem.Invoice_Number.contains(query)
+                saleItem.Bill.contains(query)
                         || Common.getFormattedDate(Constant.dateFormat, saleItem.Date)
                     .toLowerCase(Locale.getDefault())
                     .contains(query)
-                        || saleItem.Gst_Number.toLowerCase(Locale.getDefault()).contains(query)
+                        || saleItem.Party_GSTN.toLowerCase(Locale.getDefault()).contains(query)
                         || saleItem.Party_Name.toLowerCase(Locale.getDefault()).contains(query)
-                        || saleItem.Total_Invoice_Amount.toString().contains(query)
+                        || saleItem.Total_Invoice_Value.toString().contains(query)
             }
         else rawItems
         notifyDataSetChanged()

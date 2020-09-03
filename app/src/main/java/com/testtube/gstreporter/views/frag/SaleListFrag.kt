@@ -66,14 +66,14 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
         share.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_progressDialog)
             context?.let { it1 ->
-                val exclude = ArrayList<String>()
-                exclude.add("Invoice_Id")
-                exclude.add("sDate")
+                val customHeaders: Array<String> = arrayOf("Bill", "Date","GST_Percentage","Party_Name",
+                    "Party_GSTN","Total_Invoice_Value","Bill_Amount","cGST","sGST","iGST","Total_GST")
+
                 CoroutineScope(Dispatchers.IO).launch {
                     val sheet = DocumentExportService<SaleItem>().createSheet(
                         it1,
                         saleList,
-                        exclude
+                        customHeaders
                     )?.await()
                     withContext(Dispatchers.Main) {
                         findNavController().navigateUp()

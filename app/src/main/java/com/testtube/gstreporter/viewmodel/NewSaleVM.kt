@@ -2,7 +2,6 @@ package com.testtube.gstreporter.viewmodel
 
 import android.app.Application
 import android.content.Context
-import androidx.databinding.BaseObservable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Data
@@ -29,6 +28,7 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
     var iGST = ""
     var tGST = ""
     var totalInvoiceAmount = ""
+    var totalGst = ""
     var isSameState: MutableLiveData<Boolean> = MutableLiveData(false)
     var profile: MutableLiveData<Profile> = MutableLiveData()
 
@@ -58,6 +58,7 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
             cGST.toDoubleOrNull() ?: 0.0,
             iGST.toDoubleOrNull() ?: 0.0,
             tGST.toDouble(),
+            totalGst.toDouble(),
             totalInvoiceAmount.toDouble()
         )
         mSaleItem.images?.forEach { path ->
