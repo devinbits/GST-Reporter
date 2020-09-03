@@ -18,9 +18,9 @@
     <string name="include_images">Include Images</string>
     <string name="total_invoice_amount">Total Invoice Amount</string>
     <string name="total_gst">Total GST</string>
-    <string name="igst">IGST %</string>
-    <string name="cgst">CGST %</string>
-    <string name="sgst">SGST %</string>
+    <string name="igst">IGST</string>
+    <string name="cgst">CGST</string>
+    <string name="sgst">SGST</string>
     <string name="i_date">Date</string>
     <string name="taxable_amount">Taxable Amount</string>
     <string name="i_party_name">Party Name</string>
@@ -43,6 +43,7 @@
     <string name="view">View</string>
     <string name="share">Share</string>
     <string name="tax_18">18</string>
+    <string name="gst_percentage">GST %</string>
 
     <string-array name="months">
         <item>January</item>

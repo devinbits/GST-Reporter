@@ -21,8 +21,8 @@ import com.testtube.gstreporter.viewmodel.SaleListVM
 import com.testtube.gstreporter.views.adapters.SalesListAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
-import kotlinx.android.synthetic.main.fragment_first.*
-import kotlinx.android.synthetic.main.fragment_first.view.*
+import kotlinx.android.synthetic.main.sale_list_frag.*
+import kotlinx.android.synthetic.main.sale_list_frag.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +47,7 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false)
+        return inflater.inflate(R.layout.sale_list_frag, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,14 +66,14 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
         share.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_progressDialog)
             context?.let { it1 ->
-                val exclude = ArrayList<String>()
-                exclude.add("Invoice_Id")
-                exclude.add("sDate")
+                val customHeaders: Array<String> = arrayOf("Bill", "Date","GST_Percentage","Party_Name",
+                    "Party_GSTN","Total_Invoice_Value","Bill_Amount","cGST","sGST","iGST","Total_GST")
+
                 CoroutineScope(Dispatchers.IO).launch {
                     val sheet = DocumentExportService<SaleItem>().createSheet(
                         it1,
                         saleList,
-                        exclude
+                        customHeaders
                     )?.await()
                     withContext(Dispatchers.Main) {
                         findNavController().navigateUp()
