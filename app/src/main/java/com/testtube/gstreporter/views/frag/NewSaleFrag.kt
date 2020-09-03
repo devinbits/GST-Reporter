@@ -32,7 +32,7 @@ import java.util.*
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface {
+class NewSaleFrag : Fragment(R.layout.fragment_second), RecyclerViewInterface {
 
     private lateinit var viewModel: NewSaleVM
     private var fileAbsPath: String? = "";

@@ -30,7 +30,7 @@ import kotlin.collections.ArrayList
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment(), RecyclerViewInterface,
+class SaleListFrag : Fragment(), RecyclerViewInterface,
     androidx.appcompat.widget.SearchView.OnQueryTextListener, DateFilterView.OnDateFilter {
 
     private var filter: Filter? = null
@@ -178,7 +178,7 @@ class FirstFragment : Fragment(), RecyclerViewInterface,
                             saleList.addAll(list as ArrayList<SaleItem>)
                     }
                     else -> {
-                        Log.e(FirstFragment::class.simpleName, "onApply: ", it.exception)
+                        Log.e(SaleListFrag::class.simpleName, "onApply: ", it.exception)
                     }
                 }
                 updateSaleListView()

@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".views.frag.SecondFragment">
+        tools:context=".views.frag.NewSaleFrag">
 
         <ScrollView
             android:id="@+id/scrollView"

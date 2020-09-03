@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.testtube.gstreporter.views.frag.FirstFragment"
+        android:name="com.testtube.gstreporter.views.frag.SaleListFrag"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 
@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.testtube.gstreporter.views.frag.SecondFragment"
+        android:name="com.testtube.gstreporter.views.frag.NewSaleFrag"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 

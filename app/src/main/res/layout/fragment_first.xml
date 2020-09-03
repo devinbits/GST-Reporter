@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.frag.FirstFragment">
+    tools:context=".views.frag.SaleListFrag">
 
     <androidx.appcompat.widget.SearchView
         style="@style/Theme.MaterialComponents.DayNight"
