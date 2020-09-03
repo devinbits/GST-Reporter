@@ -1,6 +1,5 @@
 package com.testtube.gstreporter.views.activity
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +13,6 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var progressDialog: ProgressDialog
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +21,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        progressDialog = ProgressDialog(this)
         navController = findNavController(R.id.nav_host_fragment)
         navController.addOnDestinationChangedListener(NavController.OnDestinationChangedListener
         { _, destination, _ ->
@@ -92,16 +89,6 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true;
-    }
-
-    public fun showProgress(text: String = "loading") {
-        progressDialog.setMessage(text)
-        progressDialog.setCancelable(false)
-        if (!progressDialog.isShowing) progressDialog.show()
-    }
-
-    public fun hideProgress() {
-        progressDialog.hide()
     }
 
 }

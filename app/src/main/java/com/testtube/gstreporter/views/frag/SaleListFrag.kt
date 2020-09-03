@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.testtube.gstreporter.R
@@ -15,6 +16,8 @@ import com.testtube.gstreporter.model.Filter
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.DocumentExportService
+import com.testtube.gstreporter.utils.MyItemAnimator
+import com.testtube.gstreporter.viewmodel.SaleListVM
 import com.testtube.gstreporter.views.adapters.SalesListAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
@@ -33,6 +36,7 @@ import kotlin.collections.ArrayList
 class SaleListFrag : Fragment(), RecyclerViewInterface,
     androidx.appcompat.widget.SearchView.OnQueryTextListener, DateFilterView.OnDateFilter {
 
+    private lateinit var viewModel: SaleListVM
     private var filter: Filter? = null
     private var saleList: MutableList<SaleItem> = ArrayList()
     private lateinit var saleListAdapter: SalesListAdapter
@@ -48,16 +52,18 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.fab_new_form.setOnClickListener {
+
+        viewModel = ViewModelProvider(this).get(SaleListVM::class.java)
+        fab_new_form.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
-        view.filterView.setOnClickListener {
+        filterView.setOnClickListener {
             fragmentManager?.let { it1 ->
                 DateFilterView.getInstance(this, filter).show(it1, "dialog")
             }
         }
 
-        view.share.setOnClickListener {
+        share.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_progressDialog)
             context?.let { it1 ->
                 val exclude = ArrayList<String>()
@@ -80,43 +86,36 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
             }
         }
 
-        view.docRecyclerView.layoutManager = LinearLayoutManager(context);
+        docRecyclerView.layoutManager = LinearLayoutManager(context);
         saleListAdapter = SalesListAdapter(saleList, this)
-        view.docRecyclerView.adapter = saleListAdapter
-        itemCollectionAdapter = context?.let { ItemCollectionAdapter(it) }!!
-        getRecentDocuments()
-    }
+        docRecyclerView.adapter = saleListAdapter
+        docRecyclerView.itemAnimator = MyItemAnimator()
 
-    private fun getRecentDocuments() {
-        view?.progress_circular?.visibility = View.VISIBLE
-        saleList.clear()
-        itemCollectionAdapter.getRecentDocuments()
-            .addOnSuccessListener { querySnapshot ->
-                querySnapshot.documents.forEach { document ->
-                    document?.toObject(SaleItem::class.java).let { it1 ->
-                        it1?.let { it2 ->
-                            saleList.add(it2)
-                        }
-                    }
-                }
-                saleListAdapter.notifyDataSetChanged()
-                if (saleList.isEmpty())
-                    view?.searchView?.visibility = View.INVISIBLE
-                else {
-                    view?.searchView?.visibility = View.VISIBLE
-                    view?.searchView?.setOnQueryTextListener(this)
-                }
-                view?.progress_circular?.visibility = View.GONE
+        viewModel.getRecentDocuments().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            saleList.clear()
+            saleList.addAll(it)
+            updateSaleListView()
+        })
+
+        viewModel.loading.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it) {
+                progress_circular?.visibility = View.VISIBLE
+                fab_new_form.visibility = View.GONE
+            } else {
+                fab_new_form.visibility = View.VISIBLE
+                progress_circular?.visibility = View.GONE
             }
+        })
     }
 
     override fun onAction(pos: Int, actionId: Actions, data: Any) {
         when (actionId) {
             Actions.Delete -> {
-                itemCollectionAdapter.deleteSaleItem(data as String)
+                viewModel.deleteSale(data as String)
                 Handler().postDelayed({
-                    getRecentDocuments()
-                }, 500)
+                    saleList.removeAt(pos)
+                    updateSaleListView()
+                }, 300)
             }
             Actions.Edit -> {
                 val saleItem: SaleItem = data as SaleItem
@@ -141,7 +140,7 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
         if (filter == null) {
             view?.progress_circular?.visibility = View.GONE
             filterView.setBackgroundResource(android.R.color.transparent)
-            getRecentDocuments()
+            viewModel.getRecentDocuments()
             return
         }
         val startDate = filter.startDate
@@ -152,17 +151,11 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
                 itemCollectionAdapter.getDocuments(10, startDate, endDate).addOnCompleteListener {
                     when (it.isSuccessful) {
                         true -> {
-                            saleList.clear()
-                            val list = it.result?.documents?.map { snapshot ->
+                            viewModel.sales.postValue(it.result?.documents?.mapNotNull { snapshot ->
                                 snapshot.toObject(SaleItem::class.java)
-                            }
-                            if (list != null)
-                                saleList.addAll(list as ArrayList<SaleItem>)
-                        }
-                        else -> {
+                            })
                         }
                     }
-                    updateSaleListView()
                     filterView.setBackgroundResource(R.drawable.circile_filled)
                 }
             }
@@ -170,18 +163,14 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
             itemCollectionAdapter.getDocuments(100, startDate, filterType).addOnCompleteListener {
                 when (it.isSuccessful) {
                     true -> {
-                        saleList.clear()
-                        val list = it.result?.documents?.map { snapshot ->
+                        viewModel.sales.postValue(it.result?.documents?.mapNotNull { snapshot ->
                             snapshot.toObject(SaleItem::class.java)
-                        }
-                        if (list != null)
-                            saleList.addAll(list as ArrayList<SaleItem>)
+                        })
                     }
                     else -> {
                         Log.e(SaleListFrag::class.simpleName, "onApply: ", it.exception)
                     }
                 }
-                updateSaleListView()
                 filterView.setBackgroundResource(R.drawable.circile_filled)
             }
         } else {
@@ -193,13 +182,14 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
 
     private fun updateSaleListView() {
         saleListAdapter.notifyDataSetChanged()
-        if (saleList.isEmpty())
+        if (saleList.isEmpty()) {
             view?.searchView?.visibility = View.INVISIBLE
-        else {
+            view?.share?.visibility = View.GONE
+        } else {
+            view?.share?.visibility = View.VISIBLE
             view?.searchView?.visibility = View.VISIBLE
             view?.searchView?.setOnQueryTextListener(this)
         }
-        view?.progress_circular?.visibility = View.GONE
     }
 
 }
