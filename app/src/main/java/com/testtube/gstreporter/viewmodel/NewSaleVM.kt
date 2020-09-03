@@ -1,32 +1,48 @@
 package com.testtube.gstreporter.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.databinding.BaseObservable
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.gms.tasks.Task
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
+import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.model.SaleItem
+import com.testtube.gstreporter.utils.Constants
 import com.testtube.gstreporter.workers.FirebaseStorageFileUpload
 
-class NewSaleVM : ViewModel() {
+class NewSaleVM(application: Application) : AndroidViewModel(application) {
 
-    private lateinit var workManager: WorkManager
+    private var workManager: WorkManager
     private var itemCollectionAdapter: ItemCollectionAdapter? = null
     var invoiceNumber = "100"
     var gstNumber = ""
     var partyName = ""
     var taxableAmount = ""
     var date = ""
-    var sGST = "0.0"
-    var cGST = "0.0"
-    var iGST = "0.0"
-    var tGST = "0.0"
-    var totalInvoiceAmount = "0.0"
+    var sGST = ""
+    var cGST = ""
+    var iGST = ""
+    var tGST = ""
+    var totalInvoiceAmount = ""
+    var isSameState: MutableLiveData<Boolean> = MutableLiveData(false)
+    var profile: MutableLiveData<Profile> = MutableLiveData()
 
-    fun init(itemCollectionAdapter: ItemCollectionAdapter, workManager: WorkManager) {
-        this.itemCollectionAdapter = itemCollectionAdapter
-        this.workManager = workManager
+//    val includeImageCheckBox: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    var includeImageCheckBox: Boolean = false
+
+    init {
+        val context = getApplication() as Context
+        itemCollectionAdapter = ItemCollectionAdapter(context)
+        workManager = WorkManager.getInstance(context)
+        Profile().getProfile(context).addOnSuccessListener {
+            profile.postValue(it?.toObject(Profile::class.java) ?: Profile())
+        }
     }
 
     fun saveItem(saleItem: SaleItem): Task<Void>? {
@@ -54,7 +70,26 @@ class NewSaleVM : ViewModel() {
                 .build()
             workManager.enqueue(req)
         }
-       return itemCollectionAdapter?.saveItem(mSaleItem)
+        return itemCollectionAdapter?.saveItem(mSaleItem)
+    }
+
+    fun checkIsSameState() {
+        if (gstNumber.length < 2)
+            return
+        val sCode = gstNumber.substring(0, 2) ?: ""
+        val states = Constants.States.values()
+        if (sCode.isNotBlank()) {
+            when (val code = sCode.toIntOrNull()) {
+                null -> isSameState.value = false
+                else -> {
+                    isSameState.postValue(
+                        if (code in 1..states.size)
+                            states[code].name.replace("_", " ") == profile.value?.state
+                        else false
+                    )
+                }
+            }
+        }
     }
 
 }

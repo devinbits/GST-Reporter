@@ -1,25 +1,27 @@
 package com.testtube.gstreporter.model
 
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 import java.util.*
 
 class SaleItem(
-    val InvoiceId: Long = System.currentTimeMillis(),
-    var Invoice_Number: String = "IN-${InvoiceId}",
-    var Gst_Number: String = "",
-    var Party_Name: String = "",
-    var Taxable_Amount: Double = 0.0,
-    var Date: Date = getDate(),
-    var sDate: Int = com.testtube.gstreporter.utils.Common.getSDate(getDate()),
-    var sGST: Double = 0.0,
-    var cGST: Double = 0.0,
-    var iGST: Double = 0.0,
-    var GST: Double = sGST + cGST + iGST,
-    var Total_Invoice_Amount: Double = 0.0,
+    @Bindable val InvoiceId: Long = System.currentTimeMillis(),
+    @Bindable var Invoice_Number: String = "IN-${InvoiceId}",
+    @Bindable var Gst_Number: String = "",
+    @Bindable var Party_Name: String = "",
+    @Bindable var Taxable_Amount: Double = 0.0,
+    @Bindable var Date: Date = getDate(),
+    @Bindable var sDate: Int = com.testtube.gstreporter.utils.Common.getSDate(getDate()),
+    @Bindable var sGST: Double = 0.0,
+    @Bindable var cGST: Double = 0.0,
+    @Bindable var iGST: Double = 0.0,
+    @Bindable var GST: Double = sGST + cGST + iGST,
+    @Bindable var Total_Invoice_Amount: Double = 0.0,
     @Exclude
     var images: List<String>? = null
-) : Serializable {
+) : Serializable, BaseObservable() {
 }
 
 private fun getDate(): Date {

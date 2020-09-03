@@ -11,21 +11,17 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.WorkManager
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.databinding.FragmentSecondBinding
-import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
-import com.testtube.gstreporter.utils.Constants
 import com.testtube.gstreporter.viewmodel.NewSaleVM
 import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
@@ -39,15 +35,14 @@ import java.util.*
 class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface {
 
     private lateinit var viewModel: NewSaleVM
-    private var isSameState: MutableLiveData<Boolean> = MutableLiveData(false)
     private var fileAbsPath: String? = "";
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
     private lateinit var imageRecyclerViewAdapter: ImageRecyclerViewAdapter
-    private lateinit var profile: Profile
+    private var profile: Profile = Profile()
     private lateinit var binding: FragmentSecondBinding
 
-    val args: SecondFragmentArgs by navArgs()
+    private val args: SecondFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,9 +62,6 @@ class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         rootView = view;
-        context?.let {
-            viewModel.init(ItemCollectionAdapter(it), WorkManager.getInstance(it))
-        }
         if (args.sale != null) {
             saleItem = args.sale!!
         }
@@ -77,14 +69,12 @@ class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface
     }
 
     private fun initViews(view: View) {
-        context?.let {
-            Profile().getProfile(it).addOnSuccessListener {
-                profile = it?.toObject(Profile::class.java) ?: Profile()
-            }
-        }
+        viewModel.profile.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            profile = it
+            viewModel.checkIsSameState()
+        })
 
-        view.invoice_number.setText(saleItem.Invoice_Number)
-        view.date_text.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
+//        view.date_text.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
         view.date_text.setOnClickListener { _ ->
             openDateSelector()
         }
@@ -92,46 +82,32 @@ class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface
             validate()
         }
 
-        view.gst_number.setText(saleItem.Gst_Number)
-        view.party_name.setText(saleItem.Party_Name)
-        view.taxable_amount.setText(saleItem.Taxable_Amount.toString())
-        view.s_GST.setText(saleItem.sGST.toString())
-        view.c_GST.setText(saleItem.cGST.toString())
-        view.i_GST.setText(saleItem.iGST.toString())
-        view.t_GST.setText(saleItem.GST.toString())
-        view.total_invoice_amount.setText(saleItem.Total_Invoice_Amount.toString())
+        viewModel.invoiceNumber = saleItem.Invoice_Number
+        viewModel.gstNumber = saleItem.Gst_Number
+        viewModel.partyName = saleItem.Party_Name
+        viewModel.taxableAmount = saleItem.Taxable_Amount.toString()
+        viewModel.sGST = saleItem.sGST.toString()
+        viewModel.cGST = saleItem.cGST.toString()
+        viewModel.iGST = saleItem.iGST.toString()
+        viewModel.tGST = saleItem.GST.toString()
+        viewModel.totalInvoiceAmount = saleItem.Total_Invoice_Amount.toString()
+        viewModel.date = Common.getFormattedDate(Constant.dateFormat, saleItem.Date)
+
         view.includeImageCheckBox.setOnClickListener {
-            if (!view.includeImageCheckBox.isChecked) {
-                view.rv_container.visibility = View.GONE
-            } else {
-                view.rv_container.visibility = View.VISIBLE
-            }
+            viewModel.includeImageCheckBox = it.includeImageCheckBox.isChecked
         }
 
         gst_number.addTextChangedListener { text ->
-            val len = text?.length ?: 0
-            if (len != 15) {
-                gstNumber_layout.error = "Required"
-            } else
-                gstNumber_layout.error = null
-            if (len <= 1)
-                return@addTextChangedListener
-            val states = Constants.States.values()
-            val sCode = text?.substring(0, 2) ?: ""
-            if (sCode.isNotBlank()) {
-                when (val code = sCode.toIntOrNull()) {
-                    null -> isSameState.value = false
-                    else -> {
-                        isSameState.value = if (code in 1..states.size)
-                            states[code].name.replace("_", " ") == profile.state
-                        else false
-                    }
-                }
-            }
+            viewModel.checkIsSameState()
+        }
+
+        t_GST.addTextChangedListener {
+            if (!it.isNullOrBlank())
+                calculateTotalAmount()
         }
 
         t_GST.addTextChangedListener { text: Editable? ->
-            if (isSameState.value!!) {
+            if (viewModel.isSameState.value == true) {
                 val gst: Double = t_GST.text?.toString()?.toDoubleOrNull() ?: 0.0
                 c_GST.setText("${gst / 2}")
                 s_GST.setText("${gst / 2}")
@@ -142,7 +118,7 @@ class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface
             }
         }
 
-        isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
+        viewModel.isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
         {
             if (it) {
                 val gst: Double = t_GST.text?.toString()?.toDoubleOrNull() ?: 0.0
@@ -220,7 +196,7 @@ class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface
                 invoice_number.error = getString(R.string.required)
                 return
             }
-            viewModel.gstNumber.isBlank() -> {
+            viewModel.gstNumber.isBlank() || gst_number.text?.length != 15 -> {
                 gstNumber_layout.error = getString(R.string.required)
                 return
             }
@@ -228,15 +204,17 @@ class SecondFragment : Fragment(R.layout.fragment_second), RecyclerViewInterface
                 party_name.error = getString(R.string.required)
                 return
             }
-            viewModel.taxableAmount.isBlank() -> {
+            viewModel.taxableAmount.isBlank() || (viewModel.taxableAmount.toDoubleOrNull()
+                ?: 0.0) <= 0 -> {
                 taxable_amount.error = getString(R.string.required)
                 return
             }
-            viewModel.tGST.isBlank() -> {
+            viewModel.tGST.isBlank() || (viewModel.tGST.toDoubleOrNull() ?: 0.0) <= 0 -> {
                 t_GST.error = getString(R.string.required)
                 return
             }
-            viewModel.totalInvoiceAmount.isBlank() -> {
+            viewModel.totalInvoiceAmount.isBlank() || (viewModel.totalInvoiceAmount.toDoubleOrNull()
+                ?: 0.0) <= 0 -> {
                 total_invoice_amount.error = getString(R.string.required)
                 return
             }

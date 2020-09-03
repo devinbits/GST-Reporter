@@ -128,7 +128,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="false"
-                        android:inputType="date" />
+                        android:inputType="date"
+                        android:text="@={viewmodel.date}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
