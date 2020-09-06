@@ -2,7 +2,6 @@ package com.testtube.gstreporter.views.frag
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,6 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
     androidx.appcompat.widget.SearchView.OnQueryTextListener, DateFilterView.OnDateFilter {
 
     private lateinit var viewModel: SaleListVM
-    private var filter: Filter? = null
     private var saleList: MutableList<SaleItem> = ArrayList()
     private lateinit var saleListAdapter: SalesListAdapter
     private lateinit var itemCollectionAdapter: ItemCollectionAdapter
@@ -59,15 +57,26 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
         }
         filterView.setOnClickListener {
             fragmentManager?.let { it1 ->
-                DateFilterView.getInstance(this, filter).show(it1, "dialog")
+                DateFilterView.getInstance(this, viewModel.filter.value).show(it1, "dialog")
             }
         }
 
         share.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_progressDialog)
             context?.let { it1 ->
-                val customHeaders: Array<String> = arrayOf("Bill", "Date","GST_Percentage","Party_Name",
-                    "Party_GSTN","Total_Invoice_Value","Bill_Amount","cGST","sGST","iGST","Total_GST")
+                val customHeaders: Array<String> = arrayOf(
+                    "Bill",
+                    "Date",
+                    "GST_Percentage",
+                    "Party_Name",
+                    "Party_GSTN",
+                    "Total_Invoice_Value",
+                    "Bill_Amount",
+                    "cGST",
+                    "sGST",
+                    "iGST",
+                    "Total_GST"
+                )
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val sheet = DocumentExportService<SaleItem>().createSheet(
@@ -106,6 +115,14 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
                 progress_circular?.visibility = View.GONE
             }
         })
+
+        viewModel.filter.observe(viewLifecycleOwner, androidx.lifecycle.Observer {filter->
+            if (filter == null) {
+                filterView.setBackgroundResource(android.R.color.transparent)
+                return@Observer
+            }
+            filterView.setBackgroundResource(R.drawable.circile_filled)
+        })
     }
 
     override fun onAction(pos: Int, actionId: Actions, data: Any) {
@@ -136,48 +153,7 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
     }
 
     override fun onApply(filter: Filter?) {
-        view?.progress_circular?.visibility = View.VISIBLE
-        if (filter == null) {
-            view?.progress_circular?.visibility = View.GONE
-            filterView.setBackgroundResource(android.R.color.transparent)
-            viewModel.getRecentDocuments()
-            return
-        }
-        val startDate = filter.startDate
-        val endDate = filter.endDate
-        val filterType = filter.filterType
-        if (filter.isRange) {
-            if (startDate != null && endDate != null) {
-                itemCollectionAdapter.getDocuments(10, startDate, endDate).addOnCompleteListener {
-                    when (it.isSuccessful) {
-                        true -> {
-                            viewModel.sales.postValue(it.result?.documents?.mapNotNull { snapshot ->
-                                snapshot.toObject(SaleItem::class.java)
-                            })
-                        }
-                    }
-                    filterView.setBackgroundResource(R.drawable.circile_filled)
-                }
-            }
-        } else if (startDate != null) {
-            itemCollectionAdapter.getDocuments(100, startDate, filterType).addOnCompleteListener {
-                when (it.isSuccessful) {
-                    true -> {
-                        viewModel.sales.postValue(it.result?.documents?.mapNotNull { snapshot ->
-                            snapshot.toObject(SaleItem::class.java)
-                        })
-                    }
-                    else -> {
-                        Log.e(SaleListFrag::class.simpleName, "onApply: ", it.exception)
-                    }
-                }
-                filterView.setBackgroundResource(R.drawable.circile_filled)
-            }
-        } else {
-            view?.progress_circular?.visibility = View.GONE
-            filterView.setBackgroundResource(android.R.color.transparent)
-        }
-        this.filter = filter
+        viewModel.getFilteredDocDocuments(filter)
     }
 
     private fun updateSaleListView() {
