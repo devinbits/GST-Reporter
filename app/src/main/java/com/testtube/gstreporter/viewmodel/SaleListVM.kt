@@ -32,7 +32,7 @@ class SaleListVM(application: Application) : AndroidViewModel(application) {
         return sales
     }
 
-    fun getFilteredDocDocuments(mFilter : Filter?) {
+    fun getFilteredDocDocuments(mFilter: Filter?) {
         sales.postValue(ArrayList<SaleItem>())
         filter.postValue(mFilter)
         if (mFilter == null) {

@@ -2,14 +2,17 @@ package com.testtube.gstreporter.views.frag
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.testtube.gstreporter.R
+import com.testtube.gstreporter.database.MyDatabase
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.Filter
 import com.testtube.gstreporter.model.SaleItem
@@ -22,7 +25,6 @@ import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface.Actions
 import kotlinx.android.synthetic.main.sale_list_frag.*
 import kotlinx.android.synthetic.main.sale_list_frag.view.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,7 +80,7 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
                     "Total_GST"
                 )
 
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch(Dispatchers.IO) {
                     val sheet = DocumentExportService<SaleItem>().createSheet(
                         it1,
                         saleList,
@@ -116,12 +118,18 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
             }
         })
 
-        viewModel.filter.observe(viewLifecycleOwner, androidx.lifecycle.Observer {filter->
+        viewModel.filter.observe(viewLifecycleOwner, androidx.lifecycle.Observer { filter ->
             if (filter == null) {
                 filterView.setBackgroundResource(android.R.color.transparent)
                 return@Observer
             }
             filterView.setBackgroundResource(R.drawable.circile_filled)
+        })
+
+        MyDatabase.getDatabase(requireContext()).partyDao().getAll().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            it.forEach {p->
+                Log.d("Value", p.toString())
+            }
         })
     }
 

@@ -12,6 +12,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,8 @@ import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import kotlinx.android.synthetic.main.new_sale_frag.*
 import kotlinx.android.synthetic.main.new_sale_frag.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import java.util.*
 
 /**
@@ -107,7 +110,7 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
         }
 
         t_GST.addTextChangedListener { _: Editable? ->
-                calculateTotalAmount()
+            calculateTotalAmount()
         }
 
         viewModel.isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
@@ -218,9 +221,16 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
                 return
             }
             else -> {
+                saveGstPartyInfo(saleItem.Party_GSTN,saleItem.Party_Name)
                 viewModel.saveItem(saleItem)
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
+        }
+    }
+
+    private fun saveGstPartyInfo(gstIN: String, partyName: String) {
+        lifecycleScope.async(Dispatchers.IO) {
+            viewModel.saveGstPartyInfo(gstIN, partyName)
         }
     }
 

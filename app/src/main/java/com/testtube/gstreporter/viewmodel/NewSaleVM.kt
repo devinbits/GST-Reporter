@@ -8,6 +8,8 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.gms.tasks.Task
+import com.testtube.gstreporter.database.MyDatabase
+import com.testtube.gstreporter.database.Party
 import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.model.SaleItem
@@ -77,7 +79,7 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
     fun checkIsSameState() {
         if (gstNumber.length < 2)
             return
-        val sCode = gstNumber.substring(0, 2) ?: ""
+        val sCode = gstNumber.substring(0, 2)
         val states = Constants.States.values()
         if (sCode.isNotBlank()) {
             when (val code = sCode.toIntOrNull()) {
@@ -91,6 +93,12 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
+    }
+
+
+    fun saveGstPartyInfo(gstIN: String, partyName: String) {
+        val partyDao = MyDatabase.getDatabase(getApplication()).partyDao()
+        partyDao.insert(Party(gstIN, partyName))
     }
 
 }

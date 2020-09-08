@@ -9,9 +9,9 @@ import android.widget.TextView
 
 
 @Suppress("UNCHECKED_CAST")
-class StateAutoCompleteAdapter(
+class AutoCompleteAdapter(
     context: Context,
-    var items: List<String?>
+    private var items: List<String>
 ) :
     ArrayAdapter<String?>(context, android.R.layout.simple_spinner_dropdown_item, items) {
     override fun getView(

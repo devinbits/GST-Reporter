@@ -152,7 +152,7 @@ class Common {
                 mContext.getExternalFilesDir(dirType)
             return File.createTempFile(
                 filename,  /* prefix */
-                ext,  /* suffix */
+                "${ext}_",  /* suffix */
                 storageDir /* directory */
             )
         }
