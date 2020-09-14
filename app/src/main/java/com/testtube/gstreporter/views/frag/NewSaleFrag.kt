@@ -112,10 +112,6 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
                 calculateTotalAmount()
         }
 
-        t_GST.addTextChangedListener { _: Editable? ->
-            calculateTotalAmount()
-        }
-
         viewModel.isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
         {
             if (it) {
