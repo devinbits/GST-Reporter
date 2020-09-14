@@ -1,10 +1,13 @@
 package com.testtube.gstreporter.model
 
+import android.os.Parcelable
 import androidx.databinding.BaseObservable
 import com.google.firebase.firestore.Exclude
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
 
+@Parcelize
 class SaleItem(
     val InvoiceId: Long = System.currentTimeMillis(),
     var Bill: String = "IN-${InvoiceId}",
@@ -21,7 +24,7 @@ class SaleItem(
     var Total_Invoice_Value: Double = 0.0,
     @Exclude
     var images: List<String>? = null
-) : Serializable, BaseObservable() {
+) : Serializable, BaseObservable(), Parcelable {
 }
 
 private fun getDate(): Date {

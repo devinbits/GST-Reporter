@@ -48,34 +48,36 @@ class MainActivity : AppCompatActivity() {
         profile_button.setOnClickListener {
             navController.navigate(R.id.action_FirstFragment_to_profile)
         }
-
-        FirebaseAuth.getInstance().addAuthStateListener { it1 ->
-            when (it1.currentUser) {
-                null -> {
-                    if (navController.currentDestination?.id == R.id.profile) {
-                        val popUpTo = NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
-                        navController.navigate(R.id.action_profile_to_AuthFrag, null, popUpTo)
-                    } else navController.navigate(R.id.action_FirstFragment_to_AuthFrag)
-                }
-                else -> {
-                    Profile().getProfile(applicationContext).addOnCompleteListener { task ->
-                        when {
-                            task.isSuccessful -> {
-                                val profile = task.result?.toObject(Profile::class.java)
-                                when (profile) {
-                                    null -> when (navController.currentDestination?.id) {
-                                        R.id.FirstFragment ->
-                                            navController.navigate(
-                                                R.id.action_FirstFragment_to_profile,
-                                                null,
-                                                NavOptions.Builder()
-                                                    .setPopUpTo(R.id.FirstFragment, true).build()
+        if (savedInstanceState == null)
+            FirebaseAuth.getInstance().addAuthStateListener { it1 ->
+                when (it1.currentUser) {
+                    null -> {
+                        if (navController.currentDestination?.id == R.id.profile) {
+                            val popUpTo =
+                                NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
+                            navController.navigate(R.id.action_profile_to_AuthFrag, null, popUpTo)
+                        } else navController.navigate(R.id.action_FirstFragment_to_AuthFrag)
+                    }
+                    else -> {
+                        Profile().getProfile(applicationContext).addOnCompleteListener { task ->
+                            when {
+                                task.isSuccessful -> {
+                                    when (task.result?.toObject(Profile::class.java)) {
+                                        null -> when (navController.currentDestination?.id) {
+                                            R.id.FirstFragment ->
+                                                navController.navigate(
+                                                    R.id.action_FirstFragment_to_profile,
+                                                    null,
+                                                    NavOptions.Builder()
+                                                        .setPopUpTo(R.id.FirstFragment, true)
+                                                        .build()
+                                                )
+                                        }
+                                        else -> when {
+                                            navController.currentDestination?.id != R.id.FirstFragment -> navController.navigate(
+                                                R.id.action_authFrag_to_FirstFragment
                                             )
-                                    }
-                                    else -> when {
-                                        navController.currentDestination?.id != R.id.FirstFragment -> navController.navigate(
-                                            R.id.action_authFrag_to_FirstFragment
-                                        )
+                                        }
                                     }
                                 }
                             }
@@ -83,7 +85,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

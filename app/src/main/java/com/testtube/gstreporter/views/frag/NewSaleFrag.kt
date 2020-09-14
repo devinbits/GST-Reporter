@@ -65,8 +65,11 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         rootView = view;
-        if (args.sale != null) {
+        if (args.sale != null ) {
             saleItem = args.sale!!
+        }
+        savedInstanceState?.let {
+            saleItem = it["SaleItem"] as SaleItem
         }
         initViews(view)
     }
@@ -221,7 +224,7 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
                 return
             }
             else -> {
-                saveGstPartyInfo(saleItem.Party_GSTN,saleItem.Party_Name)
+                saveGstPartyInfo(saleItem.Party_GSTN, saleItem.Party_Name)
                 viewModel.saveItem(saleItem)
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
@@ -232,6 +235,11 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
         lifecycleScope.async(Dispatchers.IO) {
             viewModel.saveGstPartyInfo(gstIN, partyName)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable("SaleItem", viewModel.getSaleItem(saleItem))
+        super.onSaveInstanceState(outState)
     }
 
     override fun onClick(pos: Int) {

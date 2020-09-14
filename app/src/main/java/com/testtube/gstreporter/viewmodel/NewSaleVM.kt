@@ -22,7 +22,7 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
     private var itemCollectionAdapter: ItemCollectionAdapter? = null
     var invoiceNumber = "100"
     var gstNumber = ""
-    var partyName = ""
+    var partyName = "yy"
     var taxableAmount = ""
     var date = ""
     var sGST = ""
@@ -48,21 +48,7 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveItem(saleItem: SaleItem): Task<Void>? {
-        val mSaleItem = SaleItem(
-            saleItem.InvoiceId,
-            invoiceNumber,
-            gstNumber,
-            partyName,
-            taxableAmount.toDouble(),
-            saleItem.Date,
-            saleItem.sDate,
-            sGST.toDoubleOrNull() ?: 0.0,
-            cGST.toDoubleOrNull() ?: 0.0,
-            iGST.toDoubleOrNull() ?: 0.0,
-            tGST.toDouble(),
-            totalGst.toDouble(),
-            totalInvoiceAmount.toDouble()
-        )
+        val mSaleItem = getSaleItem(saleItem)
         mSaleItem.images?.forEach { path ->
             val data = Data.Builder()
                 .putString("path", path)
@@ -75,6 +61,23 @@ class NewSaleVM(application: Application) : AndroidViewModel(application) {
         }
         return itemCollectionAdapter?.saveItem(mSaleItem)
     }
+
+    fun getSaleItem(saleItem: SaleItem): SaleItem =
+        SaleItem(
+            saleItem.InvoiceId,
+            invoiceNumber,
+            gstNumber,
+            partyName,
+            taxableAmount.toDouble(),
+            saleItem.Date,
+            saleItem.sDate,
+            sGST.toDoubleOrNull() ?: 0.0,
+            cGST.toDoubleOrNull() ?: 0.0,
+            iGST.toDoubleOrNull() ?: 0.0,
+            tGST.toDoubleOrNull()?: 0.0,
+            totalGst.toDoubleOrNull()?: 0.0,
+            totalInvoiceAmount.toDoubleOrNull()?: 0.0
+        )
 
     fun checkIsSameState() {
         if (gstNumber.length < 2)

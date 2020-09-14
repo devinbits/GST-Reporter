@@ -16,10 +16,13 @@ class SaleListVM(application: Application) : AndroidViewModel(application) {
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
     private var itemCollectionAdapter: ItemCollectionAdapter =
         ItemCollectionAdapter(getApplication() as Context)
-
     var filter: MutableLiveData<Filter?> = MutableLiveData(null)
 
-    fun getRecentDocuments(): MutableLiveData<List<SaleItem>> {
+    init {
+        loadDocuments()
+    }
+
+    private fun loadDocuments(): MutableLiveData<List<SaleItem>> {
         loading.postValue(true)
         sales.postValue(ArrayList<SaleItem>())
         itemCollectionAdapter.getRecentDocuments()
@@ -32,11 +35,14 @@ class SaleListVM(application: Application) : AndroidViewModel(application) {
         return sales
     }
 
+
+    fun getRecentDocuments(): MutableLiveData<List<SaleItem>> = sales
+
     fun getFilteredDocDocuments(mFilter: Filter?) {
         sales.postValue(ArrayList<SaleItem>())
         filter.postValue(mFilter)
         if (mFilter == null) {
-            getRecentDocuments()
+            loadDocuments()
             return
         }
         loading.postValue(true)
