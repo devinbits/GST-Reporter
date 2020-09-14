@@ -5,10 +5,10 @@ import androidx.room.Dao
 import androidx.room.Query
 
 @Dao
-abstract class PartyDao : BaseDao<Party>() {
+abstract class PartyDao : BaseDao<PartyInfo>() {
 
-    @Query("SELECT * FROM Party")
-    abstract fun getAll(): LiveData<List<Party>>
+    @Query("SELECT * FROM PartyInfo")
+    abstract fun getAll(): LiveData<List<PartyInfo>>
 //
 //    @Query("SELECT * FROM Party WHERE name LIKE :name LIMIT 10")
 //    fun findByName(name: String): List<Party>

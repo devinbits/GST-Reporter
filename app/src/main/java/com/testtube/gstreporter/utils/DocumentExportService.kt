@@ -57,6 +57,8 @@ class DocumentExportService<T : Any> {
                     }.toTypedArray()
 
                 headers.forEachIndexed { index, member ->
+//                    val cellStyle = workbook.createCellStyle()
+//                    cellStyle.fillBackgroundColor = IndexedColors.YELLOW.index
                     header.createCell(index)
                         .setCellValue(member.replace("_", " ").capitalize())
                 }
@@ -70,7 +72,8 @@ class DocumentExportService<T : Any> {
                 }
 
                 try {
-                    val fileName = "${Common.getUser()}_${Common.getFormattedDate("dd_MMM_yy")}"
+                    val fileName =
+                        "${Prefs.getProfileName(context)}_${Common.getFormattedDate("dd_MMM_yy")}"
                     val file =
                         Common.createFile(
                             context,

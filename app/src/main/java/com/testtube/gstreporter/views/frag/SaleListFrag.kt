@@ -1,7 +1,6 @@
 package com.testtube.gstreporter.views.frag
 
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.database.MyDatabase
-import com.testtube.gstreporter.firestoreController.ItemCollectionAdapter
 import com.testtube.gstreporter.model.Filter
 import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
@@ -40,7 +38,6 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
     private lateinit var viewModel: SaleListVM
     private var saleList: MutableList<SaleItem> = ArrayList()
     private lateinit var saleListAdapter: SalesListAdapter
-    private lateinit var itemCollectionAdapter: ItemCollectionAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +52,10 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
 
         viewModel = ViewModelProvider(this).get(SaleListVM::class.java)
         fab_new_form.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            val saleItem: SaleItem? = viewModel.getLastDocument()
+            val actionFirstFragmentToSecondFragment =
+                SaleListFragDirections.actionFirstFragmentToSecondFragment(saleItem)
+            findNavController().navigate(actionFirstFragmentToSecondFragment)
         }
         filterView.setOnClickListener {
             fragmentManager?.let { it1 ->
@@ -83,7 +83,7 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
                 lifecycleScope.launch(Dispatchers.IO) {
                     val sheet = DocumentExportService<SaleItem>().createSheet(
                         it1,
-                        saleList,
+                        saleList.asReversed(),
                         customHeaders
                     )?.await()
                     withContext(Dispatchers.Main) {
@@ -91,13 +91,13 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
                         if (sheet != null) {
                             Common.sendEmail(it1, sheet)
                         } else
-                            Common.showToast(it1, "Error occurred in exporting data!")
+                            Common.showToast(it1, "Exporting Failed! Try Again")
                     }
                 }
             }
         }
 
-        docRecyclerView.layoutManager = LinearLayoutManager(context);
+        docRecyclerView.layoutManager = LinearLayoutManager(context)
         saleListAdapter = SalesListAdapter(saleList, this)
         docRecyclerView.adapter = saleListAdapter
         docRecyclerView.itemAnimator = MyItemAnimator()
@@ -136,17 +136,13 @@ class SaleListFrag : Fragment(), RecyclerViewInterface,
     override fun onAction(pos: Int, actionId: Actions, data: Any) {
         when (actionId) {
             Actions.Delete -> {
-                viewModel.deleteSale(data as String)
-                Handler().postDelayed({
-                    saleList.removeAt(pos)
-                    updateSaleListView()
-                }, 300)
+                viewModel.deleteSale(pos,data as String)
             }
             Actions.Edit -> {
                 val saleItem: SaleItem = data as SaleItem
                 val actionFirstFragmentToSecondFragment =
                     SaleListFragDirections.actionFirstFragmentToSecondFragment(saleItem)
-                findNavController().navigate(actionFirstFragmentToSecondFragment);
+                findNavController().navigate(actionFirstFragmentToSecondFragment)
             }
         }
     }

@@ -17,13 +17,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.testtube.gstreporter.R
 import com.testtube.gstreporter.firestoreController.ProfileAdapter
 import com.testtube.gstreporter.model.Profile
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constants
+import com.testtube.gstreporter.utils.Prefs
 import com.testtube.gstreporter.workers.FirebaseStorageFileUpload
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
@@ -46,10 +45,10 @@ class ProfileFrag : Fragment() {
         context?.let {
             ProfileAdapter(it).getProfile().addOnSuccessListener { ds ->
                 val profile = ds?.toObject(Profile::class.java)
-                if (profile != null) {
+                if (profile != null && this.isResumed)
                     setProfile(profile)
-                } else
-                    progress_circular.visibility = View.GONE
+//                } else
+//                    progress_circular.visibility = View.GONE
             }
         }
     }
@@ -59,16 +58,17 @@ class ProfileFrag : Fragment() {
         input_firm_name.setText(profile.firmName)
         input_gst_number.setText(profile.gstNumber)
         input_state.setText(profile.state)
-        if (profile.avatar.isNotBlank())
-            Firebase.storage.reference.child("${Common.getUser()}/avatar.jpg").downloadUrl.addOnSuccessListener {
-                Glide.with(this /* context */)
-                    .load(it)
-                    .centerCrop()
-                    .circleCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                    .into(avatar_image)
-            }
-        else progress_circular.visibility = View.GONE
+        Prefs.setProfileName(requireContext(), profile.name)
+//        if (profile.avatar.isNotBlank())
+//            Firebase.storage.reference.child("${Common.getUser()}/avatar.jpg").downloadUrl.addOnSuccessListener {
+//                Glide.with(this /* context */)
+//                    .load(it)
+//                    .centerCrop()
+//                    .circleCrop()
+//                    .transition(DrawableTransitionOptions.withCrossFade(500))
+//                    .into(avatar_image)
+//            }
+//        else progress_circular.visibility = View.GONE
 
     }
 
@@ -140,20 +140,20 @@ class ProfileFrag : Fragment() {
         }
 
         context?.let { it ->
-            val profile =
-                Profile(name, firmName, gstNumber, state, avatarImageTempPath ?: "").saveProfile(it)
+            Profile(name, firmName, gstNumber, state, avatarImageTempPath ?: "").saveProfile(it)
+            Prefs.setProfileName(it, name)
             if (avatarImageTempPath != null) {
                 val data = Builder()
                     .putString("path", avatarImageTempPath)
                     .putBoolean("is-avatar", true)
-                    .build();
+                    .build()
                 val req = OneTimeWorkRequestBuilder<FirebaseStorageFileUpload>()
                     .setInputData(data)
                     .build()
                 WorkManager.getInstance(it).enqueue(req)
             }
         }
-        findNavController().navigateUp();
+        findNavController().navigateUp()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

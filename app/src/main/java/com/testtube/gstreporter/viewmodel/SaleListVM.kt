@@ -29,7 +29,7 @@ class SaleListVM(application: Application) : AndroidViewModel(application) {
             .addOnSuccessListener { querySnapshot ->
                 sales.postValue(querySnapshot.documents.mapNotNull { document ->
                     document?.toObject(SaleItem::class.java)
-                })
+                }.asReversed())
                 loading.postValue(false)
             }
         return sales
@@ -39,7 +39,7 @@ class SaleListVM(application: Application) : AndroidViewModel(application) {
     fun getRecentDocuments(): MutableLiveData<List<SaleItem>> = sales
 
     fun getFilteredDocDocuments(mFilter: Filter?) {
-        sales.postValue(ArrayList<SaleItem>())
+        sales.postValue(ArrayList())
         filter.postValue(mFilter)
         if (mFilter == null) {
             loadDocuments()
@@ -79,7 +79,23 @@ class SaleListVM(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun deleteSale(id: String) {
+    fun deleteSale(pos: Int, id: String) {
+        val list = ArrayList<SaleItem>(sales.value!!)
+        list.removeAt(pos)
+        sales.postValue(list)
         itemCollectionAdapter.deleteSaleItem(id)
+    }
+
+    fun getLastDocument(): SaleItem? {
+        val size = (sales.value?.size ?: 0)
+        return if (size > 0) {
+            val saleItem = sales.value!![0]
+            val billNumber = saleItem.Bill.toIntOrNull()?.inc() ?: 1000
+            SaleItem(
+                Bill = "$billNumber",
+                Party_GSTN = saleItem.Party_GSTN,
+                Party_Name = saleItem.Party_Name
+            )
+        } else null
     }
 }

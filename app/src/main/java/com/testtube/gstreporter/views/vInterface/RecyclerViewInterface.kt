@@ -8,7 +8,7 @@ interface RecyclerViewInterface {
 
     fun onAction(pos: Int, actionId: Actions, data: Any)
 
-    public enum class Actions {
+    enum class Actions {
         Edit,
         Delete
     }

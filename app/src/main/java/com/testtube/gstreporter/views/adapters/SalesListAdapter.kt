@@ -42,7 +42,7 @@ class SalesListAdapter(
                 listener.onAction(
                     adapterPosition,
                     Actions.Delete,
-                    saleItem.Bill.split("-")[1]
+                    saleItem.InvoiceId
                 )
             }
             itemView.setOnClickListener {

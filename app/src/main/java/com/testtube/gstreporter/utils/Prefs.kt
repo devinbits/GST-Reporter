@@ -11,9 +11,16 @@ class Prefs {
             return context.getSharedPreferences("gst_prefs", Context.MODE_PRIVATE)
         }
 
-        @JvmStatic
         fun clearPrefs(context: Context) {
             getPrefs(context).edit().clear().apply()
+        }
+
+        fun setProfileName(context: Context, name: String) {
+            getPrefs(context).edit().putString("USERNAME", name).apply()
+        }
+
+        fun getProfileName(context: Context): String {
+            return getPrefs(context).getString("USERNAME", "")!!
         }
 
     }

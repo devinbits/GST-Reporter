@@ -2,15 +2,14 @@ package com.testtube.gstreporter.model
 
 import android.os.Parcelable
 import androidx.databinding.BaseObservable
-import com.google.firebase.firestore.Exclude
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
 
 @Parcelize
 class SaleItem(
-    val InvoiceId: Long = System.currentTimeMillis(),
-    var Bill: String = "IN-${InvoiceId}",
+    var Bill: String = "1001",
+    var InvoiceId: String = "${System.currentTimeMillis()}",
     var Party_GSTN: String = "",
     var Party_Name: String = "",
     var Bill_Amount: Double = 0.0,
@@ -22,10 +21,8 @@ class SaleItem(
     var GST_Percentage: Double = 0.0,
     var Total_GST: Double = sGST + cGST + iGST,
     var Total_Invoice_Value: Double = 0.0,
-    @Exclude
     var images: List<String>? = null
-) : Serializable, BaseObservable(), Parcelable {
-}
+) : Serializable, BaseObservable(), Parcelable
 
 private fun getDate(): Date {
     val cal = Calendar.getInstance()

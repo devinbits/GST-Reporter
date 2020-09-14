@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.FirstFragment -> {
                     profile_button?.visibility = View.VISIBLE
-                    toolbar_title?.text = getString(R.string.app_name)
+                    toolbar_title?.text = "Sale Records"
                 }
                 R.id.SecondFragment -> {
                     profile_button?.visibility = View.INVISIBLE
@@ -73,11 +73,11 @@ class MainActivity : AppCompatActivity() {
                                                         .build()
                                                 )
                                         }
-                                        else -> when {
-                                            navController.currentDestination?.id != R.id.FirstFragment -> navController.navigate(
-                                                R.id.action_authFrag_to_FirstFragment
-                                            )
-                                        }
+//                                        else -> when {
+//                                            navController.currentDestination?.id != R.id.FirstFragment -> navController.navigate(
+//                                                R.id.action_authFrag_to_FirstFragment
+//                                            )
+//                                        }
                                     }
                                 }
                             }
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
-        return true;
+        return true
     }
 
 }

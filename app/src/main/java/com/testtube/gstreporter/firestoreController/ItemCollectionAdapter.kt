@@ -38,7 +38,7 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
         db.collection(saleCollection).orderBy(orderBy, Query.Direction.DESCENDING).limit(count)
             .get()
 
-    fun getDocuments(count: Long = 100, date: Date): Task<QuerySnapshot> =
+    private fun getDocuments(count: Long = 100, date: Date): Task<QuerySnapshot> =
         db.collection(saleCollection).whereEqualTo("sdate", Common.getSDate(date)).get()
 
 
@@ -47,7 +47,13 @@ class ItemCollectionAdapter(val context: Context) : OnFailureListener {
             .whereLessThanOrEqualTo("sdate", Common.getSDate(end)).get()
 
     fun deleteSaleItem(id: String) {
-        db.collection(saleCollection).document(id).delete().addOnFailureListener(this)
+        db.collection(saleCollection).document(id).delete()
+            .addOnSuccessListener { Common.showToast(context, "Record deleted successfully!") }
+            .addOnFailureListener(this)
+//       deleteSaleItemImages(id)
+    }
+
+    private fun deleteSaleItemImages(id: Long) {
         val storage = Firebase.storage
         val storageRef = storage.reference
         val ref = storageRef.child("${Common.getUser()}/IN-${id}")

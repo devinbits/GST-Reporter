@@ -5,15 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
+import java.util.*
 
 
-@Suppress("UNCHECKED_CAST")
 class AutoCompleteAdapter(
     context: Context,
-    private var items: List<String>
+    private val items: List<String>
 ) :
-    ArrayAdapter<String?>(context, android.R.layout.simple_spinner_dropdown_item, items) {
+    ArrayAdapter<String?>(context, android.R.layout.simple_spinner_dropdown_item, items),
+    Filterable {
+
+    private var suggestions = items
+
     override fun getView(
         position: Int,
         convertView: View?,
@@ -31,14 +37,42 @@ class AutoCompleteAdapter(
     }
 
     override fun getItem(position: Int): String? {
-        return items[position]
+        return suggestions[position]
     }
 
     override fun getCount(): Int {
-        return items.size
+        return suggestions.size
     }
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
+    }
+
+    override fun getFilter(): Filter {
+        return myFilter
+    }
+
+    private val myFilter: Filter = object : Filter() {
+
+        override fun performFiltering(charSequence: CharSequence?): FilterResults {
+            val filterResults = FilterResults()
+            filterResults.values = if (charSequence == null || charSequence.isEmpty()) {
+                items
+            } else {
+                items.filter {
+                    it.toLowerCase(Locale.getDefault())
+                        .contains(charSequence.toString().toLowerCase(Locale.getDefault()))
+                }
+            }
+            return filterResults
+        }
+
+        override fun publishResults(
+            charSequence: CharSequence?,
+            filterResults: FilterResults
+        ) {
+            suggestions = filterResults.values as List<String>
+            notifyDataSetChanged()
+        }
     }
 }

@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,21 +24,17 @@ import com.testtube.gstreporter.model.SaleItem
 import com.testtube.gstreporter.utils.Common
 import com.testtube.gstreporter.utils.Constant
 import com.testtube.gstreporter.viewmodel.NewSaleVM
+import com.testtube.gstreporter.views.adapters.AutoCompleteAdapter
 import com.testtube.gstreporter.views.adapters.ImageRecyclerViewAdapter
 import com.testtube.gstreporter.views.vInterface.RecyclerViewInterface
 import kotlinx.android.synthetic.main.new_sale_frag.*
 import kotlinx.android.synthetic.main.new_sale_frag.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import java.util.*
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
 class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
 
     private lateinit var viewModel: NewSaleVM
-    private var fileAbsPath: String? = "";
+    private var fileAbsPath: String? = ""
     private lateinit var rootView: View
     private var saleItem: SaleItem = SaleItem()
     private lateinit var imageRecyclerViewAdapter: ImageRecyclerViewAdapter
@@ -64,8 +60,8 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        rootView = view;
-        if (args.sale != null ) {
+        rootView = view
+        if (args.sale != null) {
             saleItem = args.sale!!
         }
         savedInstanceState?.let {
@@ -75,12 +71,11 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
     }
 
     private fun initViews(view: View) {
-        viewModel.profile.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.profile.observe(viewLifecycleOwner, Observer {
             profile = it
             viewModel.checkIsSameState()
         })
 
-//        view.date_text.setText(Common.getFormattedDate(Constant.dateFormat, saleItem.Date))
         view.date_text.setOnClickListener { _ ->
             openDateSelector()
         }
@@ -105,6 +100,7 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
 
         gst_number.addTextChangedListener { _ ->
             viewModel.checkIsSameState()
+            party_name.setText(viewModel.getPartyName()?.name)
         }
 
         t_GST.addTextChangedListener {
@@ -112,7 +108,7 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
                 calculateTotalAmount()
         }
 
-        viewModel.isSameState.observe(viewLifecycleOwner, androidx.lifecycle.Observer
+        viewModel.isSameState.observe(viewLifecycleOwner, Observer
         {
             if (it) {
                 cGST_layout.visibility = View.VISIBLE
@@ -135,6 +131,13 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
                 LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             imageRecyclerViewAdapter = ImageRecyclerViewAdapter(context, this)
             view.recyclerView.adapter = imageRecyclerViewAdapter
+
+
+            viewModel.getPartyInfo().observe(viewLifecycleOwner, Observer {
+                val gstInfoAdapter = AutoCompleteAdapter(context, it.map { e -> e.gstId })
+                gst_number.threshold = 1
+                gst_number.setAdapter(gstInfoAdapter)
+            })
         }
     }
 
@@ -220,16 +223,9 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
                 return
             }
             else -> {
-                saveGstPartyInfo(saleItem.Party_GSTN, saleItem.Party_Name)
                 viewModel.saveItem(saleItem)
                 findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
-        }
-    }
-
-    private fun saveGstPartyInfo(gstIN: String, partyName: String) {
-        lifecycleScope.async(Dispatchers.IO) {
-            viewModel.saveGstPartyInfo(gstIN, partyName)
         }
     }
 
@@ -245,7 +241,7 @@ class NewSaleFrag : Fragment(R.layout.new_sale_frag), RecyclerViewInterface {
     override fun onClick(pos: Int, data: Any) {
         val filePath: String = data as String
         val action = NewSaleFragDirections.actionSecondFragmentToImageViewerFrag(filePath)
-        findNavController().navigate(action);
+        findNavController().navigate(action)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

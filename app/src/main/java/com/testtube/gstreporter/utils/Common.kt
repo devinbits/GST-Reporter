@@ -26,19 +26,17 @@ import java.util.concurrent.ExecutionException
 class Common {
 
     companion object {
-//        @JvmStatic
-//        lateinit var instance: Common
 
-        public fun showToast(context: Context?, message: String?) {
+        fun showToast(context: Context?, message: String?) {
             context?.let { Toast.makeText(context, message, Toast.LENGTH_LONG).show() }
         }
 
-        public fun showToast(context: Context?, message: Int) {
+        fun showToast(context: Context?, message: Int) {
             context?.let { Toast.makeText(context, message, Toast.LENGTH_LONG).show() }
         }
 
         @SuppressLint("SimpleDateFormat")
-        public fun getFormattedDate(format: String, mDate: Date = Date()): String {
+        fun getFormattedDate(format: String, mDate: Date = Date()): String {
             val simpleDateFormat = SimpleDateFormat(format)
             return simpleDateFormat.format(mDate)
         }
@@ -46,7 +44,7 @@ class Common {
         @JvmStatic
         @SuppressLint("StaticFieldLeak")
         @Throws(ExecutionException::class, InterruptedException::class)
-        public fun grabBitMapfromFileAsync(
+        fun grabBitMapfromFileAsync(
             mContext: Context?,
             filePath: String?,
             thumbNailSize: Int = 0
@@ -61,10 +59,6 @@ class Common {
                         thumbNailSize, thumbNailSize
                     )
                     return bitmap
-                }
-
-                override fun onPostExecute(aVoid: Bitmap?) {
-                    super.onPostExecute(aVoid)
                 }
 
             }.execute().get()
@@ -152,7 +146,7 @@ class Common {
                 mContext.getExternalFilesDir(dirType)
             return File.createTempFile(
                 filename,  /* prefix */
-                "${ext}_",  /* suffix */
+                ext,  /* suffix */
                 storageDir /* directory */
             )
         }
